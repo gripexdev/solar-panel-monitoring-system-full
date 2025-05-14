@@ -6,23 +6,25 @@ export const AuthContext = createContext();
 
 // children: This is the content (e.g., Navbar, routes) wrapped inside the AuthProvider.
 export const AuthProvider = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
-    const [isAdmin, setIsAdmin] = useState(localStorage.getItem('role') === 'ADMIN');
-    
-    // Refresh authentication state
+    const [isAuthenticated, setIsAuthenticated] = useState(UserService.isAuthenticated());
+    const [isAdmin, setIsAdmin] = useState(UserService.isAdmin());
+
     const refreshAuthState = () => {
         setIsAuthenticated(UserService.isAuthenticated());
         setIsAdmin(UserService.isAdmin());
     };
 
+    const logout = () => {
+        UserService.logout();
+        refreshAuthState();
+    };
+
     useEffect(() => {
-        refreshAuthState(); // Initial authentication check
+        refreshAuthState();
     }, []);
 
     return (
-        // AuthContext.Provider: Makes the context values available to all child components.
-        // (isAuthenticated, isAdmin, refreshAuthState)
-        <AuthContext.Provider value={{ isAuthenticated, isAdmin, refreshAuthState }}>
+        <AuthContext.Provider value={{ isAuthenticated, isAdmin, refreshAuthState, logout }}>
             {children}
         </AuthContext.Provider>
     );
