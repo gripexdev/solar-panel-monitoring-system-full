@@ -18,12 +18,18 @@ public class SolarPanelMonitoringSystemApplication {
     @Bean
     CommandLineRunner run(UsersRepo userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
-            String email = "omar@omar.com";
+            String email = "admin@admin.com";
+            OurUsers ourUsers = userRepository.findByEmail(email);
+            if(ourUsers != null){
+                userRepository.delete(ourUsers);
+            }
+
             OurUsers user = new OurUsers();
             user.setEmail(email);
-            user.setPassword(passwordEncoder.encode("omaromar"));
-            user.setRole("ADMIN"); // or whatever role you use
+            user.setPassword(passwordEncoder.encode("adminadmin"));
+            user.setRole("ADMIN");
             userRepository.save(user);
+
             System.out.println("Default admin user created.");
         };
     }

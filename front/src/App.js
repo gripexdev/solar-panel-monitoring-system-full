@@ -8,6 +8,7 @@ import RegistrationPage from '../src/components/auth/RegistrationPage';
 import UserManagementPage from '../src/components/userspage/UserManagementPage';
 import UpdateUser from '../src/components/userspage/UpdateUser';
 import { AuthProvider } from './components/auth/AuthContext';
+import MonitoringDashboard from './MonitoringDashboard';
 
 
 
@@ -29,6 +30,7 @@ function App() {
                       <Route path="/register" element={<RegistrationPage />}  />
                       <Route path="/admin/user-management" element={<UserManagementPage />} />
                       <Route path="update-user/:userId" element={<UpdateUser />} />
+                      <Route path="/monitoring" element={<MonitoringDashboard />} />
                     </>
                 )}
                 <Route path='*' element={<Navigate to="/login" />} />%

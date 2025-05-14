@@ -34,6 +34,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults()) // Enable CORS (to allow requests from other domains)
                 // Secure different parts of the app
                 .authorizeHttpRequests(request -> request.requestMatchers("/auth/**", "/public/**").permitAll() // Public Paths
+                        .requestMatchers("/ws/**", "/ws/info/**").permitAll() // web sockets
                         .requestMatchers("/admin/**").hasAnyAuthority("ADMIN") // Admin-only paths
                         .requestMatchers("/user/**").hasAnyAuthority("USER") // User-only paths
                         .requestMatchers("/adminuser/**").hasAnyAuthority("ADMIN", "USER") // Both role can access

@@ -1,0 +1,226 @@
+.solar-panel-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.panel-mount {
+    position: relative;
+    height: 300px;
+    width: 300px;
+}
+
+/* Mounting Pole */
+.mounting-pole {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 200px;
+    background: linear-gradient(to right, #777, #555, #777);
+    border-radius: 3px;
+    z-index: 1;
+}
+
+.pole-shadow {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.3) 0%,
+            transparent 50%,
+            rgba(0, 0, 0, 0.3) 100%
+    );
+}
+
+/* Pole Top Bracket */
+.pole-top {
+    position: absolute;
+    bottom: 180px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    z-index: 2;
+}
+
+.bracket {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #555;
+    border-radius: 5px;
+    transform: rotate(45deg);
+}
+
+/* Solar Panel */
+.solar-panel {
+    position: absolute;
+    bottom: 180px;
+    left: 50%;
+    transform-origin: 50% 20px;
+    transform: translateX(-50%) rotate(0deg);
+    width: 180px;
+    height: 100px;
+    background: #0d1a26;
+    border-radius: 3px;
+    transition: transform 1.5s ease-in-out;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 3;
+    overflow: hidden;
+}
+
+.panel-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 1px solid #2c3e50;
+    border-radius: 3px;
+    pointer-events: none;
+}
+
+.frame-corner {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    border: 2px solid #2c3e50;
+    border-radius: 2px;
+}
+
+.frame-corner.tl {
+    top: 5px;
+    left: 5px;
+    border-right: none;
+    border-bottom: none;
+}
+.frame-corner.tr {
+    top: 5px;
+    right: 5px;
+    border-left: none;
+    border-bottom: none;
+}
+.frame-corner.bl {
+    bottom: 5px;
+    left: 5px;
+    border-right: none;
+    border-top: none;
+}
+.frame-corner.br {
+    bottom: 5px;
+    right: 5px;
+    border-left: none;
+    border-top: none;
+}
+
+.panel-cells {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    gap: 2px;
+    padding: 8px;
+    height: 100%;
+}
+
+.panel-cell {
+    background: linear-gradient(135deg, #3a7bd5, #00d2ff);
+    border-radius: 1px;
+    box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.3);
+    position: relative;
+}
+
+.panel-cell::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.3) 0%,
+            rgba(255, 255, 255, 0) 50%,
+            rgba(255, 255, 255, 0.3) 100%
+    );
+}
+
+/* Data Display */
+.panel-data {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-top: 30px;
+}
+
+.efficiency-meter {
+    width: 60%;
+}
+
+.efficiency-bar {
+    height: 20px;
+    background: #2c3e50;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.efficiency-fill {
+    height: 100%;
+    background: linear-gradient(to right, #f39c12, #f1c40f);
+    width: 0%;
+    transition: width 1s ease-in-out;
+    border-radius: 10px;
+}
+
+.efficiency-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+    font-size: 0.8rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.temperature-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+}
+
+.temp-value {
+    font-weight: bold;
+    color: #e74c3c;
+}
+
+/* Responsive shadow effect */
+.solar-panel::before {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    right: 0;
+    height: 15px;
+    background: radial-gradient(
+            ellipse at center,
+            rgba(0, 0, 0, 0.4) 0%,
+            transparent 70%
+    );
+    transform-origin: 50% 0;
+    transform: scaleY(0.5) translateZ(0);
+    filter: blur(5px);
+    opacity: 0.7;
+    transition: all 1.5s ease-in-out;
+}
