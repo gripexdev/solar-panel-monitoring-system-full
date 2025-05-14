@@ -22,7 +22,7 @@ public class SolarPanelMonitoringSystemApplication {
             OurUsers user = new OurUsers();
             user.setEmail(email);
             user.setPassword(passwordEncoder.encode("omaromar"));
-            user.setRole("admin"); // or whatever role you use
+            user.setRole("ADMIN"); // or whatever role you use
             userRepository.save(user);
             System.out.println("Default admin user created.");
         };
