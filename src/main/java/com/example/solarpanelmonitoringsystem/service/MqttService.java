@@ -11,6 +11,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+
+/*
+    System Flow:
+
+        IoT Devices → [MQTT Broker] → MqttService → WebSocket → Dashboard Clients
+           ↑                      ↓
+           ˅________MqttController (HTTP API)
+ */
+
 @Service
 public class MqttService implements MqttCallback {
     private static final Logger logger = LoggerFactory.getLogger(MqttService.class);
@@ -57,7 +66,6 @@ public class MqttService implements MqttCallback {
     @Override
     public void connectionLost(Throwable cause) {
         logger.error("MQTT connection lost", cause);
-        // Implement reconnection logic here
     }
 
     @Override

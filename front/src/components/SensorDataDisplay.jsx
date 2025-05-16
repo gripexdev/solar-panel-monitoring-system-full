@@ -31,7 +31,7 @@ const SensorDataDisplay = ({ data }) => {
                 <SolarPanel
                     efficiency={data.efficiency}
                     temperature={data.temperature}
-                    rotationAngle={data.rotationAngle || 0} // Add this to your DTO
+                    rotationAngle={data.rotationAngle || 0}
                 />
             </div>
 
