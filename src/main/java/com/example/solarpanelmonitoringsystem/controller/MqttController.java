@@ -13,6 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/mqtt")
 public class MqttController {
+
+    /*
+        This controller provides HTTP interface to publish message to MQTT topics.
+     */
+
+
     private static final Logger logger = LoggerFactory.getLogger(MqttController.class);
 
     private final MqttService mqttService;
@@ -21,6 +27,7 @@ public class MqttController {
         this.mqttService = mqttService;
     }
 
+    // method that publish mqtt messages
     @PostMapping("/publish")
     public ResponseEntity<String> publishMessage(@RequestBody MqttMessageDto messageDto) {
         try {

@@ -25,13 +25,13 @@ const SensorDataDisplay = ({ data }) => {
     return (
         <div className="sensor-data">
             <h3>Panel: {displayData.panelId}</h3>
-
+        
             {/* Solar Panel Visualization */}
             <div className="panel-container">
                 <SolarPanel
                     efficiency={data.efficiency}
                     temperature={data.temperature}
-                    rotationAngle={data.rotationAngle || 0} // Add this to your DTO
+                    rotationAngle={data.rotationAngle || 0}
                 />
             </div>
 

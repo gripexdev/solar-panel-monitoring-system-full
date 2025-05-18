@@ -2,11 +2,11 @@ import LoginPage from '../src/components/auth/LoginPage';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
-import ProfilePage from '../src/components/userspage/ProfilePage';
 import RegistrationPage from '../src/components/auth/RegistrationPage';
 import UserManagementPage from '../src/components/userspage/UserManagementPage';
 import UpdateUser from '../src/components/userspage/UpdateUser';
 import MonitoringDashboard from './MonitoringDashboard';
+import MonitoringDashboardV2 from './MonitoringDashboardV2';
 import { AuthProvider, AuthContext } from './components/auth/AuthContext';
 import { useContext } from 'react';
 
@@ -35,16 +35,6 @@ function App() {
                             {/* Public Routes */}
                             <Route path="/" element={<LoginPage />} />
                             <Route path="/login" element={<LoginPage />} />
-
-                            {/* Protected Routes (User or Admin) */}
-                            <Route
-                                path="/profile"
-                                element={
-                                    <ProtectedRoute>
-                                        <ProfilePage />
-                                    </ProtectedRoute>
-                                }
-                            />
 
                             {/* Admin-only Routes */}
                             <Route
@@ -76,6 +66,14 @@ function App() {
                                 element={
                                     <ProtectedRoute requiredRole="ADMIN">
                                         <MonitoringDashboard />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/monitoringv2"
+                                element={
+                                    <ProtectedRoute requiredRole="ADMIN">
+                                        <MonitoringDashboardV2 />
                                     </ProtectedRoute>
                                 }
                             />

@@ -4,7 +4,7 @@ import useWebSocket from "./hooks/useWebSocket";
 import SensorDataDisplay from "./components/SensorDataDisplay";
 import LiveChart from "./components/LiveChart";
 import ControlPanel from "./components/ControlPanel";
-import "./components/SolarPanel.css";
+// import "./components/SolarPanel.css";
 import "./solarpanel.css";
 
 function MonitoringDashboard() {

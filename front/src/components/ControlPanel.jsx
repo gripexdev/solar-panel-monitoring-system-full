@@ -37,9 +37,7 @@ const ControlPanel = ({ stompClient, connected }) => {
                     value={panelId}
                     onChange={(e) => setPanelId(e.target.value)}
                 >
-                    <option value="panel-1">Panel 1</option>
-                    <option value="panel-2">Panel 2</option>
-                    <option value="panel-3">Panel 3</option>
+                    <option value="panel-1" selected>Panel 1</option>
                 </select>
             </div>
             <div className="form-group">
