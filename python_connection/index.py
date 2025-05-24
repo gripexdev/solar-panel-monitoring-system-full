@@ -74,12 +74,13 @@ def publish(client):
     while not FLAG_EXIT:
         msg_dict = {
             "snow": random.choice([True, False]),
-            "wind_speed": round(random.uniform(0.0, 25.0), 2),       # in m/s
-            "switch_state": round(random.uniform(0.0, 3.0), 1),      # e.g. 0 to 3 states
-            "voltage": round(random.uniform(200.0, 800.0), 1),       # in volts
-            "pvAngle": random.randint(0, 180),                       # in degrees
-            "humidity": round(random.uniform(10.0, 100.0), 1),       # in %
-            "temperature": round(random.uniform(-10.0, 60.0), 1)     # in °C
+            "wind_speed": 20,  # static value
+            "rain_detected": random.choice([True, False]),
+            "switch_state": 5.2,
+            "radiation": 10,
+            "pvAngle": 100,
+            "humidity": 20.5,
+            "temperature": 78.5
         }
         msg = json.dumps(msg_dict)
 
