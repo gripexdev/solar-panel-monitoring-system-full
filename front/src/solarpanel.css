@@ -102,6 +102,7 @@ body {
     border-radius: 8px;
     align-items: center;
     transition: all 0.3s ease;
+    color: white;
 }
 
 .data-item:hover {
