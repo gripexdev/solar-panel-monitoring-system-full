@@ -26,19 +26,21 @@ import "./SolarPanelDashboard2.css";
 
 function MonitoringDashboardV2() {
   // State for all the data displayed in the UI
-  const [dateTime, setDateTime] = useState("2024-04-24 10:30");
-  const [connected, setConnected] = useState(true);
+  const [dateTime, setDateTime] = useState(new Date().toISOString().slice(0, 16).replace('T', ' '));
+  const [connected, setConnected] = useState(false);
   const [systemStatus, setSystemStatus] = useState("ON");
 
-  // Environmental sensors data
-  const [environmentalData, setEnvironmentalData] = useState({
-    windSpeed: "5.2 m/s",
-    iceDetected: "Yes",
-    rainDetected: "No",
-    temperature: "11.8°C",
-    radiation: "576 W/m²",
-    humidity: "45%",
-    pressure: "1012 hPa"
+  // Sensor data state (initialized with default values matching your Python data)
+  const [sensorData, setSensorData] = useState({
+    snow: 0,
+    wind_speed: 0,
+    rain_detected: 0,
+    switch_state: 0,
+    radiation: 0,
+    pvAngle: 0,
+    humidity: 0,
+    temperature: 0,
+    timestamp: ""
   });
 
   // Tracker control state
@@ -54,36 +56,17 @@ function MonitoringDashboardV2() {
   });
 
   // Alert logs
-  const [alertLogs, setAlertLogs] = useState([
-    "Safety mode activated",
-    "Wind speed high",
-    "Fault detected"
-  ]);
+  const [alertLogs, setAlertLogs] = useState([]);
 
   // Chart data
-  const [angleData, setAngleData] = useState([
-    { time: '00:00', angle: 30, radiation: 100 },
-    { time: '04:00', angle: 35, radiation: 300 },
-    { time: '08:00', angle: 45, radiation: 500 },
-    { time: '12:00', angle: 40, radiation: 700 },
-    { time: '16:00', angle: 30, radiation: 500 },
-    { time: '20:00', angle: 35, radiation: 300 },
-    { time: '24:00', angle: 30, radiation: 100 }
-  ]);
-
-  // Current values
-  const [currentAngle, setCurrentAngle] = useState(35);
-  const [currentRadiation, setCurrentRadiation] = useState(576);
+  const [angleData, setAngleData] = useState([]);
+  const MAX_DATA_POINTS = 20;
 
   // Update current date and time
   useEffect(() => {
     const intervalId = setInterval(() => {
-      const now = new Date();
-      const formattedDateTime = now.toISOString().slice(0, 10) + ' ' +
-        now.toTimeString().slice(0, 5);
-      setDateTime(formattedDateTime);
-    }, 60000); // Update every minute
-
+      setDateTime(new Date().toISOString().slice(0, 16).replace('T', ' '));
+    }, 60000);
     return () => clearInterval(intervalId);
   }, []);
 
@@ -92,42 +75,48 @@ function MonitoringDashboardV2() {
     "http://localhost:8080/ws",
     ["/topic/sensor-data"],
     (message) => {
-      const newData = JSON.parse(message.body);
-      // Update states based on received data
-      if (newData.environmental) {
-        setEnvironmentalData(newData.environmental);
-      }
-      if (newData.trackerControl) {
-        setControlMode(newData.trackerControl.mode);
-        setTargetAngle(newData.trackerControl.angle);
-        setLimitSwitchState(newData.trackerControl.limitSwitch);
-      }
-      if (newData.chartData) {
-        // Add new data points to the chart
-        if (newData.chartData.angle) {
-          const newAngleData = [...angleData];
-          newAngleData.shift();
-          newAngleData.push({
-            time: new Date().toTimeString().slice(0, 5),
-            angle: newData.chartData.angle,
-            radiation: newData.chartData.radiation || currentRadiation
-          });
-          setAngleData(newAngleData);
-          setCurrentAngle(newData.chartData.angle);
-          if (newData.chartData.radiation) {
-            setCurrentRadiation(newData.chartData.radiation);
-          }
+      try {
+        const newData = JSON.parse(message.body);
+        setSensorData(prev => ({
+          ...prev,
+          ...newData
+        }));
+
+        // Update chart data
+        const now = new Date().toTimeString().slice(0, 5);
+        setAngleData(prev => {
+          const newDataPoints = [...prev, {
+            time: now,
+            angle: newData.pvAngle || 0,
+            radiation: newData.radiation || 0
+          }];
+          return newDataPoints.length > MAX_DATA_POINTS 
+            ? newDataPoints.slice(newDataPoints.length - MAX_DATA_POINTS)
+            : newDataPoints;
+        });
+
+        // Generate alerts based on conditions
+        const newAlerts = [];
+        if (newData.wind_speed > 30) newAlerts.push("High wind speed detected");
+        if (newData.temperature > 40) newAlerts.push("High temperature warning");
+        if (newData.snow) newAlerts.push("Snow detected");
+        if (newData.rain_detected) newAlerts.push("Rain detected");
+        
+        if (newAlerts.length > 0) {
+          setAlertLogs(prev => [...newAlerts, ...prev.slice(0, 2)]);
         }
+      } catch (e) {
+        console.error("Error processing sensor data:", e);
       }
     }
   );
 
-  // Update connection status when WebSocket state changes
+  // Update connection status
   useEffect(() => {
     setConnected(wsConnected);
   }, [wsConnected]);
 
-  // Function to handle control mode changes
+  // Control functions
   const changeControlMode = (mode) => {
     setControlMode(mode);
     if (stompClient && stompClient.connected) {
@@ -135,38 +124,25 @@ function MonitoringDashboardV2() {
     }
   };
 
-  // Function to handle emergency stop
   const handleEmergencyStop = () => {
     if (stompClient && stompClient.connected) {
       stompClient.send("/app/emergency", {}, JSON.stringify({ stop: true }));
     }
-    // Update UI to reflect emergency state
     setSystemStatus("EMERGENCY");
   };
 
-  // Function to handle sun rays selection
-  const handleSunRaysChange = (e) => {
-    setPlantRequirements({
-      ...plantRequirements,
-      sunRays: e.target.value
-    });
-    if (stompClient && stompClient.connected) {
-      stompClient.send("/app/plant-requirements", {}, JSON.stringify({ sunRays: e.target.value }));
-    }
+  // Helper functions
+  const formatValue = (value, fixed = 1) => {
+    if (value === undefined || value === null) return "0";
+    return typeof value === 'number' ? value.toFixed(fixed) : value;
   };
 
-  // Function to handle shading change
-  const handleShadingChange = (e) => {
-    const newShading = parseInt(e.target.value);
-    setPlantRequirements({
-      ...plantRequirements,
-      shading: newShading
-    });
-    if (stompClient && stompClient.connected) {
-      stompClient.send("/app/plant-requirements", {}, JSON.stringify({ shading: newShading }));
-    }
-  };
-
+  const getStatusText = (value) => value ? "Yes" : "No";
+  const getStatusClass = (value) => value ? "warning" : "";
+console.log("Rendering SolarPanel with:", {
+  angle: sensorData.pvAngle, 
+  temp: sensorData.temperature
+});
   return (
     <div className="solar-dashboard">
       {/* Header */}
@@ -197,18 +173,18 @@ function MonitoringDashboardV2() {
             <div className="status-indicators">
               <div className="indicator">
                 <span>Current Angle</span>
-                <strong>{currentAngle}°</strong>
+                <strong>{formatValue(sensorData.pvAngle)}°</strong>
               </div>
               <div className="indicator">
                 <span>Current Radiation</span>
-                <strong>{currentRadiation} W/m²</strong>
+                <strong>{formatValue(sensorData.radiation)} W/m²</strong>
               </div>
             </div>
             <div className="solar-panel-visualization">
+              
               <SolarPanel
-                efficiency={Math.min(100, Math.floor(currentRadiation / 10))}
-                temperature={parseFloat(environmentalData.temperature)}
-                rotationAngle={currentAngle}
+                temperature={sensorData.temperature}
+                pvAngle={sensorData.pvAngle}
               />
             </div>
           </div>
@@ -225,15 +201,15 @@ function MonitoringDashboardV2() {
                 <div className="sensor-icon"><WindIcon /></div>
                 <div className="sensor-info">
                   <span>Wind Speed</span>
-                  <strong>{environmentalData.windSpeed}</strong>
+                  <strong>{formatValue(sensorData.wind_speed)} m/s</strong>
                 </div>
               </div>
               <div className="sensor-item">
                 <div className="sensor-icon"><IceIcon /></div>
                 <div className="sensor-info">
                   <span>Ice Detected</span>
-                  <strong className={environmentalData.iceDetected === "Yes" ? "warning" : ""}>
-                    {environmentalData.iceDetected}
+                  <strong className={getStatusClass(sensorData.snow)}>
+                    {getStatusText(sensorData.snow)}
                   </strong>
                 </div>
               </div>
@@ -241,28 +217,30 @@ function MonitoringDashboardV2() {
                 <div className="sensor-icon"><RainIcon /></div>
                 <div className="sensor-info">
                   <span>Rain Detected</span>
-                  <strong>{environmentalData.rainDetected}</strong>
+                  <strong className={getStatusClass(sensorData.rain_detected)}>
+                    {getStatusText(sensorData.rain_detected)}
+                  </strong>
                 </div>
               </div>
               <div className="sensor-item">
                 <div className="sensor-icon"><TemperatureIcon /></div>
                 <div className="sensor-info">
                   <span>Temperature</span>
-                  <strong>{environmentalData.temperature}</strong>
+                  <strong>{formatValue(sensorData.temperature)}°C</strong>
                 </div>
               </div>
               <div className="sensor-item">
                 <div className="sensor-icon"><RadiationIcon /></div>
                 <div className="sensor-info">
                   <span>Radiation</span>
-                  <strong>{environmentalData.radiation}</strong>
+                  <strong>{formatValue(sensorData.radiation)} W/m²</strong>
                 </div>
               </div>
               <div className="sensor-item">
                 <div className="sensor-icon"><HumidityIcon /></div>
                 <div className="sensor-info">
                   <span>Humidity</span>
-                  <strong>{environmentalData.humidity}</strong>
+                  <strong>{formatValue(sensorData.humidity)}%</strong>
                 </div>
               </div>
             </div>
@@ -322,7 +300,7 @@ function MonitoringDashboardV2() {
                 <LineChart data={angleData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
                   <XAxis dataKey="time" />
-                  <YAxis />
+                  <YAxis domain={[0, 180]} />
                   <Tooltip />
                   <Line
                     type="monotone"
@@ -367,7 +345,7 @@ function MonitoringDashboardV2() {
               <label>Sun Rays Period</label>
               <select
                 value={plantRequirements.sunRays}
-                onChange={handleSunRaysChange}
+                onChange={(e) => setPlantRequirements({...plantRequirements, sunRays: e.target.value})}
                 className="time-select"
               >
                 <option value="Morning">Morning</option>
@@ -382,7 +360,7 @@ function MonitoringDashboardV2() {
                 min="0"
                 max="100"
                 value={plantRequirements.shading}
-                onChange={handleShadingChange}
+                onChange={(e) => setPlantRequirements({...plantRequirements, shading: parseInt(e.target.value)})}
                 className="shading-slider"
               />
             </div>
@@ -402,13 +380,19 @@ function MonitoringDashboardV2() {
           </div>
           <div className="card-content">
             <ul className="alert-list">
-              {alertLogs.map((alert, index) => (
-                <li key={index} className="alert-item">
-                  <span className="alert-icon"><AlertIcon /></span>
-                  <span className="alert-message">{alert}</span>
-                  <span className="alert-time">10:{30 - index} AM</span>
+              {alertLogs.length > 0 ? (
+                alertLogs.map((alert, index) => (
+                  <li key={index} className="alert-item">
+                    <span className="alert-icon"><AlertIcon /></span>
+                    <span className="alert-message">{alert}</span>
+                    <span className="alert-time">{new Date().toTimeString().slice(0, 5)}</span>
+                  </li>
+                ))
+              ) : (
+                <li className="alert-item">
+                  <span className="alert-message">No alerts</span>
                 </li>
-              ))}
+              )}
             </ul>
           </div>
         </div>

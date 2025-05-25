@@ -10,12 +10,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SensorDataDto {
-    private String panelId;
-    private double voltage;
-    private double current;
-    private double power;
+    private boolean snow;
+    private double windSpeed;
+    private boolean rainDetected;
+    private double switchState;
+    private double radiation;
+    private double pvAngle;
+    private double humidity;
     private double temperature;
-    private double efficiency;
-    private double rotationAngle; // (0-180 degrees)
     private LocalDateTime timestamp;
 }

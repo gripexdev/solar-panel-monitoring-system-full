@@ -1,18 +1,23 @@
 import React, { useEffect, useRef } from "react";
 import "./SolarPanel.css";
 
-const SolarPanel = ({ efficiency, temperature, rotationAngle }) => {
+const SolarPanel = ({ pvAngle = 0, temperature = 0 }) => {
+    //   console.log("SolarPanel rendered with:", { pvAngle, temperature });
+
     const panelRef = useRef(null);
-    const efficiencyRef = useRef(null);
+
+    // Safe value formatting
+    const formatValue = (value, fixed = 1) => {
+        if (value === undefined || value === null) return "0";
+        return typeof value === 'number' ? value.toFixed(fixed) : value;
+    };
 
     useEffect(() => {
-        if (panelRef.current) {
-            panelRef.current.style.transform = `translateX(-50%) rotate(${rotationAngle}deg)`;
+         if (panelRef.current) {
+            const angle = typeof pvAngle === 'number' ? pvAngle : 0;
+            panelRef.current.style.transform = `translateX(-50%) rotate(${angle}deg)`;
         }
-        if (efficiencyRef.current) {
-            efficiencyRef.current.style.width = `${efficiency}%`;
-        }
-    }, [rotationAngle, efficiency]);
+    }, [pvAngle]);
 
     return (
         <div className="solar-panel-container">
@@ -44,17 +49,13 @@ const SolarPanel = ({ efficiency, temperature, rotationAngle }) => {
             </div>
 
             <div className="panel-data">
-                <div className="efficiency-meter">
-                    <div className="efficiency-label">Efficiency</div>
-                    <div className="efficiency-bar">
-                        <div ref={efficiencyRef} className="efficiency-fill"></div>
-                        <span className="efficiency-value">{efficiency.toFixed(1)}%</span>
-                    </div>
-                </div>
-
                 <div className="temperature-display">
                     <div className="temp-icon">🌡️</div>
-                    <div className="temp-value">{temperature.toFixed(1)}°C</div>
+                    <div className="temp-value">{formatValue(temperature)}°C</div>
+                </div>
+                <div className="panel-angle-display">
+                    <div className="angle-icon">📐</div>
+                    <div className="angle-value">{formatValue(pvAngle)}°</div>
                 </div>
             </div>
         </div>

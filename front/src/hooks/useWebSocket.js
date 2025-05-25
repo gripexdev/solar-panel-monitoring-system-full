@@ -13,7 +13,7 @@ const useWebSocket = (url, topics, onMessage) => {
             heartbeatIncoming: 4000,
             heartbeatOutgoing: 4000,
             debug: function (str) {
-                console.log("STOMP: ", str);
+                // console.log("STOMP: ", str);
             },
         });
 
