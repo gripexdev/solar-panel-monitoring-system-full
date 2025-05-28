@@ -142,7 +142,7 @@ def publish(client):
         else:
             print(f'Failed to send message to topic {TOPIC}')
 
-        time.sleep(3)  # Send data every 3 seconds
+        time.sleep(60)  # Send data every 60 seconds
 
 def run():
     logging.basicConfig(

@@ -6,7 +6,6 @@ import RegistrationPage from '../src/components/auth/RegistrationPage';
 import UserManagementPage from '../src/components/userspage/UserManagementPage';
 import UpdateUser from '../src/components/userspage/UpdateUser';
 import MonitoringDashboard from './MonitoringDashboard';
-import MonitoringDashboardV2 from './MonitoringDashboardV2';
 import { AuthProvider, AuthContext } from './components/auth/AuthContext';
 import { useContext } from 'react';
 
@@ -66,14 +65,6 @@ function App() {
                                 element={
                                     <ProtectedRoute requiredRole="ADMIN">
                                         <MonitoringDashboard />
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route
-                                path="/monitoringv2"
-                                element={
-                                    <ProtectedRoute requiredRole="ADMIN">
-                                        <MonitoringDashboardV2 />
                                     </ProtectedRoute>
                                 }
                             />
