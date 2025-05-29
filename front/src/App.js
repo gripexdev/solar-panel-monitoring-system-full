@@ -16,10 +16,6 @@ const ProtectedRoute = ({ children, requiredRole }) => {
         return <Navigate to="/login" />;
     }
 
-    if (requiredRole === 'ADMIN' && !isAdmin) {
-        return <Navigate to="/profile" />;
-    }
-
     return children;
 };
 

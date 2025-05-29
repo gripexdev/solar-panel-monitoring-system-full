@@ -19,7 +19,7 @@ function LoginPage() {
                 localStorage.setItem('token', userData.token);
                 localStorage.setItem('role', userData.role.toUpperCase()); // Normalize role
                 refreshAuthState(); // Refresh state after login
-                navigate('/profile');
+                navigate('/monitoring');
             } else {
                 setError(userData.message);
             }

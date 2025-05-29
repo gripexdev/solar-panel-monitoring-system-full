@@ -55,32 +55,71 @@ function RegistrationPage(){
     }
 
     return(
-        <div className="auth-container">
-            <h2>Registration</h2>
-                <form onSubmit={handleSubmit}>
+        <div className="registration-container">
+            <div className="registration-card">
+                <h2 className="registration-title">Register New User</h2>
+                <form onSubmit={handleSubmit} className="registration-form">
                     <div className="form-group">
-                        <label>Name : </label>
-                        <input type="text" name="name" value={formData.name} onChange={handleInputChange} required />
+                        <label className="form-label">Full Name</label>
+                        <input
+                            type="text"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleInputChange}
+                            className="form-input"
+                            required
+                        />
                     </div>
                     <div className="form-group">
-                        <label>Email : </label>
-                        <input type="email" name="email" value={formData.email} onChange={handleInputChange} required />
+                        <label className="form-label">Email Address</label>
+                        <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            className="form-input"
+                            required
+                        />
                     </div>
                     <div className="form-group">
-                        <label>Password : </label>
-                        <input type="password" name="password" value={formData.password} onChange={handleInputChange} required />
+                        <label className="form-label">Password</label>
+                        <input
+                            type="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleInputChange}
+                            className="form-input"
+                            required
+                        />
                     </div>
                     <div className="form-group">
-                        <label>Role : </label>
-                        <input type="text" name="role" value={formData.role} onChange={handleInputChange} required />
+                        <label className="form-label">Role</label>
+                        <select
+                            name="role"
+                            value={formData.role}
+                            onChange={handleInputChange}
+                            className="form-select"
+                            required
+                        >
+                            <option value="">Select a role</option>
+                            <option value="ADMIN">Admin</option>
+                            <option value="USER">User</option>
+                        </select>
                     </div>
                     <div className="form-group">
-                        <label>City : </label>
-                        <input type="text" name="city" value={formData.city} onChange={handleInputChange} required />
+                        <label className="form-label">City</label>
+                        <input
+                            type="text"
+                            name="city"
+                            value={formData.city}
+                            onChange={handleInputChange}
+                            className="form-input"
+                            required
+                        />
                     </div>
-                    <button type="submit">Register</button>
+                    <button type="submit" className="submit-button">Register User</button>
                 </form>
-
+            </div>
         </div>
     )
 

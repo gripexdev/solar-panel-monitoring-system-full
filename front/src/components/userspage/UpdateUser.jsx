@@ -57,8 +57,8 @@ function UpdateUser() {
       <h2>Update User</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label>Name:</label>
-          <input
+          <label className="form-label">Name:</label>
+          <input  className="form-input"
             type="text"
             name="name"
             value={userData.name}
@@ -75,8 +75,8 @@ function UpdateUser() {
           />
         </div>
         <div className="form-group">
-          <label>Role:</label>
-          <input
+          <label className="form-label">Role:</label>
+          <input className="form-input"
             type="text"
             name="role"
             value={userData.role}
@@ -84,8 +84,8 @@ function UpdateUser() {
           />
         </div>
         <div className="form-group">
-          <label>City:</label>
-          <input
+          <label className="form-label">City:</label>
+          <input className="form-input"
             type="text"
             name="city"
             value={userData.city}
