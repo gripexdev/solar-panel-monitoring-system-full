@@ -76,6 +76,9 @@ public class MqttService implements MqttCallback {
 
             SensorDataDto sensorData = objectMapper.readValue(payload, SensorDataDto.class);
             messagingTemplate.convertAndSend("/topic/sensor-data", sensorData);
+            // Debbuging
+            logger.info("Raw payload: {}", payload);
+            logger.info("Parsed data: {}", sensorData);
         } catch (JsonProcessingException e) {
             logger.error("Error processing MQTT message", e);
         }

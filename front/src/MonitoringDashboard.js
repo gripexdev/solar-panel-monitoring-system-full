@@ -105,6 +105,7 @@ function MonitoringDashboard() {
         if (newAlerts.length > 0) {
           setAlertLogs(prev => [...newAlerts, ...prev.slice(0, 2)]);
         }
+        
       } catch (e) {
         console.error("Error processing sensor data:", e);
       }
