@@ -40,7 +40,7 @@ function MonitoringDashboard() {
 	const [connected, setConnected] = useState(false);
 	const [systemStatus, setSystemStatus] = useState("ON");
 
-	// Sensor data state (initialized with default values matching your Python data)
+	// Sensor data state (initialized with default values matching the Python data)
 	const [sensorData, setSensorData] = useState({
 		snow: 0,
 		wind_speed: 0,
@@ -63,7 +63,7 @@ function MonitoringDashboard() {
 	const [plantRequirements, setPlantRequirements] = useState({
 		sunRays: "Morning",
 		shading: 0,
-		nightFrostProtection: "USED",
+		nightFrostProtection: true, // Now boolean
 	});
 
 	// Alert logs
@@ -130,12 +130,26 @@ function MonitoringDashboard() {
 		}
 	);
 
+	// send plant requirements to the mqtt broker
+	const sendPlantRequirements = () => {
+		if (stompClient && stompClient.connected) {
+			stompClient.publish({
+				destination: "/app/plant-requirements",
+				body: JSON.stringify(plantRequirements),
+			});
+			setAlertLogs((prev) => [
+				"Plant requirements sent to sensor",
+				...prev.slice(0, 2),
+			]);
+		}
+	};
+
 	// Update connection status
 	useEffect(() => {
 		setConnected(wsConnected);
 	}, [wsConnected]);
 
-	// Update your control functions in MonitoringDashboard.js
+	// change controle mode command
 	const changeControlMode = (mode) => {
 		setControlMode(mode);
 		if (stompClient && stompClient.connected) {
@@ -150,6 +164,7 @@ function MonitoringDashboard() {
 		}
 	};
 
+	// Send manual angle command when in manual mode
 	const sendManualAngle = (angle) => {
 		if (stompClient && stompClient.connected) {
 			stompClient.publish({
@@ -160,10 +175,11 @@ function MonitoringDashboard() {
 					emergencyStop: false,
 				}),
 			});
-			setTargetAngle(`${angle}°`); // Update the displayed target angle
+			setTargetAngle(`${angle}°`);
 		}
 	};
 
+	// Handle emergency stop
 	const handleEmergencyStop = () => {
 		if (stompClient && stompClient.connected) {
 			stompClient.publish({
@@ -507,16 +523,42 @@ function MonitoringDashboard() {
 						</div>
 						<div className="requirement-item">
 							<label>Night Frost Protection</label>
-							<div
-								className={`protection-status ${
-									plantRequirements.nightFrostProtection === "USED"
-										? "active"
-										: ""
-								}`}
-							>
-								{plantRequirements.nightFrostProtection}
+							<div className="protection-toggle">
+								<button
+									className={`toggle-button ${
+										plantRequirements.nightFrostProtection ? "active" : ""
+									}`}
+									onClick={() =>
+										setPlantRequirements({
+											...plantRequirements,
+											nightFrostProtection: true,
+										})
+									}
+								>
+									Yes
+								</button>
+								<button
+									className={`toggle-button ${
+										!plantRequirements.nightFrostProtection ? "active" : ""
+									}`}
+									onClick={() =>
+										setPlantRequirements({
+											...plantRequirements,
+											nightFrostProtection: false,
+										})
+									}
+								>
+									No
+								</button>
 							</div>
 						</div>
+						<button
+							className="send-button"
+							onClick={sendPlantRequirements}
+							disabled={!connected}
+						>
+							<SettingsIcon /> SEND TO SENSOR
+						</button>
 					</div>
 				</div>
 

@@ -27,7 +27,7 @@ public class MqttController {
         this.mqttService = mqttService;
     }
 
-    // method that publish mqtt messages
+    // method that publishes mqtt messages
     @PostMapping("/publish")
     public ResponseEntity<String> publishMessage(@RequestBody MqttMessageDto messageDto) {
         try {

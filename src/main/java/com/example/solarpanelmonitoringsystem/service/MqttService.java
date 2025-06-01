@@ -1,6 +1,7 @@
 package com.example.solarpanelmonitoringsystem.service;
 
 import com.example.solarpanelmonitoringsystem.dto.ControlCommandDto;
+import com.example.solarpanelmonitoringsystem.dto.PlantRequirementsDto;
 import com.example.solarpanelmonitoringsystem.dto.SensorDataDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,6 +35,9 @@ public class MqttService implements MqttCallback {
 
     @Value("${mqtt.topic.control}")
     private String controlTopic;
+
+    @Value("${mqtt.topic.plant-requirements}")
+    private String plantRequirementsTopic;
 
     public MqttService(MqttClient mqttClient,
                        SimpMessagingTemplate messagingTemplate,
@@ -102,7 +106,7 @@ public class MqttService implements MqttCallback {
         logger.debug("Published message to topic {}: {}", topic, message);
     }
 
-    // Add this method to your existing MqttService class
+    // This method is used to publish control command to the MQTT broker
     public void publishControlCommand(ControlCommandDto command) throws MqttException {
         if (controlTopic == null || controlTopic.isEmpty()) {
             throw new IllegalStateException("Control topic not configured");
@@ -114,6 +118,22 @@ public class MqttService implements MqttCallback {
             logger.info("Published control command to MQTT: {}", command);
         } catch (JsonProcessingException e) {
             logger.error("Error serializing control command", e);
+            throw new MqttException(e);
+        }
+    }
+
+    // This method is used to publish plant requirements to the MQTT broker
+    public void publishPlantRequirements(PlantRequirementsDto requirements) throws MqttException {
+        if (plantRequirementsTopic == null || plantRequirementsTopic.isEmpty()) {
+            throw new IllegalStateException("Plant requirements topic not configured");
+        }
+
+        try {
+            String message = objectMapper.writeValueAsString(requirements);
+            publishMessage(plantRequirementsTopic, message);
+            logger.info("Published plant requirements to MQTT: {}", requirements);
+        } catch (JsonProcessingException e) {
+            logger.error("Error serializing plant requirements", e);
             throw new MqttException(e);
         }
     }
