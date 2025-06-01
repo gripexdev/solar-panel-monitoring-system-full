@@ -4,6 +4,12 @@ import com.example.solarpanelmonitoringsystem.dto.SensorDataDto;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
+import com.example.solarpanelmonitoringsystem.dto.ControlCommandDto;
+import com.example.solarpanelmonitoringsystem.service.MqttService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.eclipse.paho.client.mqttv3.MqttException;
 
 @Controller
 public class WebSocketController {
@@ -15,9 +21,34 @@ public class WebSocketController {
             - The same data is returned and automatically broadcast to all subscribers of /topic/sensor-data
      */
 
+    private static final Logger logger = LoggerFactory.getLogger(WebSocketController.class);
+
+    private final SimpMessagingTemplate messagingTemplate;
+    private final MqttService mqttService;
+
+    public WebSocketController(SimpMessagingTemplate messagingTemplate,
+                               MqttService mqttService) {
+        this.messagingTemplate = messagingTemplate;
+        this.mqttService = mqttService;
+    }
+
     @MessageMapping("/sensor-data")
     @SendTo("/topic/sensor-data")
     public SensorDataDto broadcastSensorData(SensorDataDto sensorData) {
         return sensorData;
+    }
+
+    @MessageMapping("/control")
+    public void handleControlCommand(ControlCommandDto command) throws MqttException {
+        logger.info("Received control command: {}", command);
+        mqttService.publishControlCommand(command);
+    }
+
+    @MessageMapping("/emergency")
+    public void handleEmergencyStop(ControlCommandDto command) throws MqttException {
+        logger.info("Received emergency stop command");
+        command.setMode("SAFETY");
+        command.setEmergencyStop(true);
+        mqttService.publishControlCommand(command);
     }
 }

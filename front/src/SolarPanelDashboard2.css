@@ -498,3 +498,73 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* styling for tracker control */
+/* Manual Angle Control Styles */
+.manual-control {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.angle-control label {
+    display: block;
+    font-size: 14px;
+    color: var(--gray-color);
+    margin-bottom: 8px;
+}
+
+.angle-input-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.angle-slider {
+    flex: 1;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    outline: none;
+}
+
+.angle-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.angle-input-value {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: 80px;
+}
+
+.angle-number-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: #f8fafc;
+    font-size: 14px;
+    text-align: center;
+}
+
+.angle-apply-button {
+    padding: 8px 16px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.angle-apply-button:hover {
+    background-color: #4338ca;
+}

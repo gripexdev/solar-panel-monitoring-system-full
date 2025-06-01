@@ -1,5 +1,6 @@
 package com.example.solarpanelmonitoringsystem.service;
 
+import com.example.solarpanelmonitoringsystem.dto.ControlCommandDto;
 import com.example.solarpanelmonitoringsystem.dto.SensorDataDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -99,5 +100,21 @@ public class MqttService implements MqttCallback {
         mqttMessage.setRetained(true);
         mqttClient.publish(topic, mqttMessage);
         logger.debug("Published message to topic {}: {}", topic, message);
+    }
+
+    // Add this method to your existing MqttService class
+    public void publishControlCommand(ControlCommandDto command) throws MqttException {
+        if (controlTopic == null || controlTopic.isEmpty()) {
+            throw new IllegalStateException("Control topic not configured");
+        }
+
+        try {
+            String message = objectMapper.writeValueAsString(command);
+            publishMessage(controlTopic, message);
+            logger.info("Published control command to MQTT: {}", command);
+        } catch (JsonProcessingException e) {
+            logger.error("Error serializing control command", e);
+            throw new MqttException(e);
+        }
     }
 }
