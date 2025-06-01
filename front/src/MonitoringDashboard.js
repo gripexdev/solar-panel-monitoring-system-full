@@ -171,10 +171,23 @@ function MonitoringDashboard() {
 				body: JSON.stringify({
 					mode: "SAFETY",
 					emergencyStop: true,
+					targetAngle: null,
 				}),
 			});
 		}
 		setSystemStatus("EMERGENCY");
+		setControlMode("SAFETY");
+
+		// Disable all controls
+		setSensorData((prev) => ({
+			...prev,
+			switch_state: 0, // Turn off the system
+			pvAngle: 0, // Reset angle to safety position
+			radiation: 0, // Reset radiation reading
+		}));
+
+		// Clear any active alerts
+		setAlertLogs(["SYSTEM SHUTDOWN - Emergency stop activated"]);
 	};
 
 	// Helper functions
@@ -324,6 +337,7 @@ function MonitoringDashboard() {
 									controlMode === "MANUAL" ? "active" : ""
 								}`}
 								onClick={() => changeControlMode("MANUAL")}
+								disabled={systemStatus === "EMERGENCY"}
 							>
 								<ManualIcon /> MANUAL MODE
 							</button>
@@ -332,6 +346,7 @@ function MonitoringDashboard() {
 									controlMode === "SAFETY" ? "active" : ""
 								}`}
 								onClick={() => changeControlMode("SAFETY")}
+								disabled={systemStatus === "EMERGENCY"}
 							>
 								<SafetyIcon /> SAFETY MODE
 							</button>
@@ -340,6 +355,7 @@ function MonitoringDashboard() {
 									controlMode === "AUTOTRACK" ? "active" : ""
 								}`}
 								onClick={() => changeControlMode("AUTOTRACK")}
+								disabled={systemStatus === "EMERGENCY"}
 							>
 								<AutoIcon /> AUTOTRACK
 							</button>

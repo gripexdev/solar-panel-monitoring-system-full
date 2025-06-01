@@ -47,8 +47,16 @@ public class WebSocketController {
     @MessageMapping("/emergency")
     public void handleEmergencyStop(ControlCommandDto command) throws MqttException {
         logger.info("Received emergency stop command");
+
+        // Force safety mode and emergency stop
         command.setMode("SAFETY");
         command.setEmergencyStop(true);
+        command.setTargetAngle(0.0); // Set to safety position
+
+        // Publish to MQTT
         mqttService.publishControlCommand(command);
+
+        // Broadcast to all clients
+        messagingTemplate.convertAndSend("/topic/emergency", command);
     }
 }
