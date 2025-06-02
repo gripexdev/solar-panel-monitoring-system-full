@@ -1,38 +1,54 @@
 import React, { useEffect, useRef } from "react";
 import "./SolarPanel.css";
 
-const SolarPanel = ({ pvAngle = 0, temperature = 0 }) => {
-    //   console.log("SolarPanel rendered with:", { pvAngle, temperature });
-
+const SolarPanel = ({ pvAngle = 0, temperature = 0, timeOfDay = 0.5 }) => {
     const panelRef = useRef(null);
-
-    // Safe value formatting
-    const formatValue = (value, fixed = 1) => {
-        if (value === undefined || value === null) return "0";
-        return typeof value === 'number' ? value.toFixed(fixed) : value;
-    };
+    const sunRef = useRef(null);
 
     useEffect(() => {
-         if (panelRef.current) {
+        if (panelRef.current) {
             const angle = typeof pvAngle === 'number' ? pvAngle : 0;
             panelRef.current.style.transform = `translateX(-50%) rotate(${angle}deg)`;
         }
     }, [pvAngle]);
 
+    useEffect(() => {
+        if (sunRef.current) {
+            const x = timeOfDay * 100;
+            const y = 50 + (Math.sin(timeOfDay * Math.PI) * 50);
+            
+            sunRef.current.style.left = `${Math.min(90, Math.max(10, x))}%`;
+            sunRef.current.style.top = `${Math.min(80, Math.max(20, y))}%`;
+            
+            if (timeOfDay < 0.25 || timeOfDay > 0.75) {
+                sunRef.current.style.background = '#f39c12';
+                sunRef.current.style.boxShadow = '0 0 30px #e74c3c';
+            } else {
+                sunRef.current.style.background = '#f1c40f';
+                sunRef.current.style.boxShadow = '0 0 50px #f39c12';
+            }
+        }
+    }, [timeOfDay]);
+
     return (
         <div className="solar-panel-container">
+            <div className="sky-container">
+                <div 
+                    ref={sunRef} 
+                    className="sun"
+                    style={{
+                        left: '50%',
+                        top: '100%'
+                    }}
+                />
+                <div className="horizon" />
+            </div>
+            
             <div className="panel-mount">
-                {/* Mounting Pole */}
                 <div className="mounting-pole">
                     <div className="pole-shadow"></div>
                 </div>
-
-                {/* Pole Top Bracket */}
-                <div className="pole-top">
-                    <div className="bracket"></div>
-                </div>
-
-                {/* Solar Panel */}
+                <div className="panel-connection"></div>
                 <div ref={panelRef} className="solar-panel">
                     <div className="panel-cells">
                         {Array.from({ length: 48 }).map((_, i) => (
@@ -45,17 +61,6 @@ const SolarPanel = ({ pvAngle = 0, temperature = 0 }) => {
                         <div className="frame-corner bl"></div>
                         <div className="frame-corner br"></div>
                     </div>
-                </div>
-            </div>
-
-            <div className="panel-data">
-                <div className="temperature-display">
-                    <div className="temp-icon">🌡️</div>
-                    <div className="temp-value">{formatValue(temperature)}°C</div>
-                </div>
-                <div className="panel-angle-display">
-                    <div className="angle-icon">📐</div>
-                    <div className="angle-value">{formatValue(pvAngle)}°</div>
                 </div>
             </div>
         </div>

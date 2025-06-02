@@ -81,6 +81,14 @@ function MonitoringDashboard() {
 		return () => clearInterval(intervalId);
 	}, []);
 
+	// Function to get the current time of day as a fraction of the day (0 to 1)
+	const getCurrentTimeOfDay = () => {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    return (hours * 60 + minutes) / 1440; // 1440 minutes in a day
+};
+
 	// WebSocket connection
 	const {
 		stompClient,
@@ -263,6 +271,7 @@ function MonitoringDashboard() {
 							<SolarPanel
 								temperature={sensorData.temperature}
 								pvAngle={sensorData.pvAngle}
+								timeOfDay={getCurrentTimeOfDay()}
 							/>
 						</div>
 					</div>

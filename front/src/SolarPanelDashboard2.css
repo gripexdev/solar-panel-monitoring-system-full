@@ -184,12 +184,13 @@ body {
 }
 
 .solar-panel-visualization {
-    height: 200px;
+    height: 300px; /* Match the new component height */
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f8fafc;
+    background-color: white; /* Changed from #f8fafc for better contrast */
     border-radius: 8px;
+    padding: 10px;
 }
 
 /* Environmental Sensors Card */
