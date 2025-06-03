@@ -272,6 +272,7 @@ function MonitoringDashboard() {
 								temperature={sensorData.temperature}
 								pvAngle={sensorData.pvAngle}
 								timeOfDay={getCurrentTimeOfDay()}
+								efficiency={sensorData.efficiency}
 							/>
 						</div>
 					</div>
