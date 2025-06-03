@@ -1,656 +1,687 @@
 :root {
-    --primary-color: #4f46e5;
-    --secondary-color: #10b981;
-    --danger-color: #ef4444;
-    --warning-color: #f59e0b;
-    --info-color: #3b82f6;
-    --dark-color: #1e293b;
-    --light-color: #f8fafc;
-    --gray-color: #64748b;
-    --border-radius: 12px;
-    --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --transition: all 0.3s ease;
+	--primary-color: #4f46e5;
+	--secondary-color: #10b981;
+	--danger-color: #ef4444;
+	--warning-color: #f59e0b;
+	--info-color: #3b82f6;
+	--dark-color: #1e293b;
+	--light-color: #f8fafc;
+	--gray-color: #64748b;
+	--border-radius: 12px;
+	--box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+		0 2px 4px -1px rgba(0, 0, 0, 0.06);
+	--transition: all 0.3s ease;
 }
 
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: #f1f5f9;
-    color: var(--dark-color);
-    line-height: 1.6;
+	font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+	background-color: #f1f5f9;
+	color: var(--dark-color);
+	line-height: 1.6;
 }
 
 .solar-dashboard {
-    max-width: 1800px;
-    margin: 0 auto;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+	max-width: 1800px;
+	margin: 0 auto;
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
 }
 
 .dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 10px;
 }
 
 .dashboard-header h1 {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--dark-color);
+	font-size: 24px;
+	font-weight: 700;
+	color: var(--dark-color);
 }
 
 .header-info {
-    display: flex;
-    align-items: center;
-    gap: 20px;
+	display: flex;
+	align-items: center;
+	gap: 20px;
 }
 
 .date-time {
-    background-color: white;
-    padding: 8px 16px;
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
-    font-weight: 500;
+	background-color: white;
+	padding: 8px 16px;
+	border-radius: var(--border-radius);
+	box-shadow: var(--box-shadow);
+	font-weight: 500;
 }
 
 .connection-status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 500;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-weight: 500;
 }
 
 .connection-status svg {
-    font-size: 20px;
+	font-size: 20px;
 }
 
 .connection-status .connected {
-    color: var(--secondary-color);
+	color: var(--secondary-color);
 }
 
 .connection-status .disconnected {
-    color: var(--danger-color);
+	color: var(--danger-color);
 }
 
 .dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: 20px;
+	display: grid;
+	grid-template-columns: repeat(12, 1fr);
+	gap: 20px;
 }
 
 .dashboard-card {
-    background-color: white;
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
-    overflow: hidden;
-    transition: var(--transition);
+	background-color: white;
+	border-radius: var(--border-radius);
+	box-shadow: var(--box-shadow);
+	overflow: hidden;
+	transition: var(--transition);
 }
 
 .dashboard-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+	transform: translateY(-2px);
+	box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+		0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 .card-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid #e2e8f0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+	padding: 16px 20px;
+	border-bottom: 1px solid #e2e8f0;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
 
 .card-header h2 {
-    font-size: 16px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+	font-size: 16px;
+	font-weight: 600;
+	display: flex;
+	align-items: center;
+	gap: 8px;
 }
 
 .card-header svg {
-    color: var(--primary-color);
+	color: var(--primary-color);
 }
 
 .card-content {
-    padding: 20px;
+	padding: 20px;
 }
 
 /* System Status Card */
 .system-status {
-    grid-column: span 4;
+	grid-column: span 4;
 }
 
 .status-badge {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-weight: 600;
-    font-size: 14px;
-    text-transform: uppercase;
+	padding: 6px 12px;
+	border-radius: 20px;
+	font-weight: 600;
+	font-size: 14px;
+	text-transform: uppercase;
 }
 
 .status-badge.on {
-    background-color: #d1fae5;
-    color: var(--secondary-color);
+	background-color: #d1fae5;
+	color: var(--secondary-color);
 }
 
 .status-badge.off {
-    background-color: #fee2e2;
-    color: var(--danger-color);
+	background-color: #fee2e2;
+	color: var(--danger-color);
 }
 
 .status-badge.emergency {
-    background-color: #fee2e2;
-    color: var(--danger-color);
-    animation: pulse 1.5s infinite;
+	background-color: #fee2e2;
+	color: var(--danger-color);
+	animation: pulse 1.5s infinite;
 }
 
 @keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.7; }
-    100% { opacity: 1; }
+	0% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.7;
+	}
+	100% {
+		opacity: 1;
+	}
 }
 
 .status-indicators {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 20px;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
+	margin-bottom: 20px;
 }
 
 .indicator {
-    background-color: #f8fafc;
-    padding: 12px;
-    border-radius: 8px;
+	background-color: #f8fafc;
+	padding: 12px;
+	border-radius: 8px;
 }
 
 .indicator span {
-    display: block;
-    font-size: 14px;
-    color: var(--gray-color);
-    margin-bottom: 4px;
+	display: block;
+	font-size: 14px;
+	color: var(--gray-color);
+	margin-bottom: 4px;
 }
 
 .indicator strong {
-    font-size: 18px;
-    font-weight: 600;
+	font-size: 18px;
+	font-weight: 600;
 }
 
 .solar-panel-visualization {
-    height: 300px; /* Match the new component height */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: white; /* Changed from #f8fafc for better contrast */
-    border-radius: 8px;
-    padding: 10px;
+	height: 300px; /* Match the new component height */
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: white; /* Changed from #f8fafc for better contrast */
+	border-radius: 8px;
+	padding: 10px;
 }
 
 /* Environmental Sensors Card */
 .environmental-sensors {
-    grid-column: span 4;
+	grid-column: span 4;
 }
 
 .sensor-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 16px;
 }
 
 .sensor-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    background-color: #f8fafc;
-    border-radius: 8px;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px;
+	background-color: #f8fafc;
+	border-radius: 8px;
 }
 
 .sensor-icon svg {
-    font-size: 24px;
-    color: var(--primary-color);
+	font-size: 24px;
+	color: var(--primary-color);
 }
 
 .sensor-info {
-    flex: 1;
+	flex: 1;
 }
 
 .sensor-info span {
-    display: block;
-    font-size: 14px;
-    color: var(--gray-color);
+	display: block;
+	font-size: 14px;
+	color: var(--gray-color);
 }
 
 .sensor-info strong {
-    font-size: 16px;
-    font-weight: 600;
+	font-size: 16px;
+	font-weight: 600;
 }
 
 .sensor-info .warning {
-    color: var(--warning-color);
+	color: var(--warning-color);
 }
 
 /* Tracker Control Card */
 .tracker-control {
-    grid-column: span 4;
+	grid-column: span 4;
 }
 
 .control-modes {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
-    margin-bottom: 20px;
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 12px;
+	margin-bottom: 20px;
 }
 
 .control-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    background-color: #e0e7ff;
-    color: var(--primary-color);
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 12px;
+	border: none;
+	border-radius: 8px;
+	background-color: #e0e7ff;
+	color: var(--primary-color);
+	font-weight: 600;
+	cursor: pointer;
+	transition: var(--transition);
 }
 
 .control-button:hover {
-    background-color: #c7d2fe;
+	background-color: #c7d2fe;
 }
 
 .control-button.active {
-    background-color: var(--primary-color);
-    color: white;
+	background-color: var(--primary-color);
+	color: white;
 }
 
 .control-button svg {
-    font-size: 18px;
+	font-size: 18px;
 }
 
 .angle-display {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
 }
 
 .angle-value,
 .limit-switch {
-    background-color: #f8fafc;
-    padding: 12px;
-    border-radius: 8px;
+	background-color: #f8fafc;
+	padding: 12px;
+	border-radius: 8px;
 }
 
 .angle-value span,
 .limit-switch span {
-    display: block;
-    font-size: 14px;
-    color: var(--gray-color);
-    margin-bottom: 4px;
+	display: block;
+	font-size: 14px;
+	color: var(--gray-color);
+	margin-bottom: 4px;
 }
 
 .angle-value strong,
 .limit-switch strong {
-    font-size: 18px;
-    font-weight: 600;
+	font-size: 18px;
+	font-weight: 600;
 }
 
 .limit-switch .warning {
-    color: var(--warning-color);
+	color: var(--warning-color);
 }
 
 /* Performance Charts Card */
 .performance-charts {
-    grid-column: span 8;
+	grid-column: span 8;
 }
 
 .chart-container {
-    margin-bottom: 20px;
+	margin-bottom: 20px;
 }
 
 .chart-container h3 {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: var(--gray-color);
+	font-size: 14px;
+	font-weight: 600;
+	margin-bottom: 8px;
+	color: var(--gray-color);
 }
 
 /* Plant Requirements Card */
 .plant-requirements {
-    grid-column: span 4;
+	grid-column: span 4;
 }
 
 .requirement-item {
-    margin-bottom: 20px;
+	margin-bottom: 20px;
 }
 
 .requirement-item label {
-    display: block;
-    font-size: 14px;
-    color: var(--gray-color);
-    margin-bottom: 8px;
+	display: block;
+	font-size: 14px;
+	color: var(--gray-color);
+	margin-bottom: 8px;
 }
 
 .time-select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    background-color: #f8fafc;
-    font-size: 14px;
+	width: 100%;
+	padding: 10px;
+	border: 1px solid #e2e8f0;
+	border-radius: 8px;
+	background-color: #f8fafc;
+	font-size: 14px;
 }
 
 .shading-slider {
-    width: 100%;
-    height: 8px;
-    background: #e2e8f0;
-    border-radius: 4px;
-    outline: none;
+	width: 100%;
+	height: 8px;
+	background: #e2e8f0;
+	border-radius: 4px;
+	outline: none;
 }
 
 .shading-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    background: var(--primary-color);
-    border-radius: 50%;
-    cursor: pointer;
+	-webkit-appearance: none;
+	width: 20px;
+	height: 20px;
+	background: var(--primary-color);
+	border-radius: 50%;
+	cursor: pointer;
 }
 
 .protection-status {
-    padding: 10px;
-    text-align: center;
-    border-radius: 8px;
-    font-weight: 600;
-    background-color: #e2e8f0;
-    color: var(--gray-color);
+	padding: 10px;
+	text-align: center;
+	border-radius: 8px;
+	font-weight: 600;
+	background-color: #e2e8f0;
+	color: var(--gray-color);
 }
 
 .protection-status.active {
-    background-color: #d1fae5;
-    color: var(--secondary-color);
+	background-color: #d1fae5;
+	color: var(--secondary-color);
 }
 
 /* Alert Logs Card */
 .alert-logs {
-    grid-column: span 4;
+	grid-column: span 4;
 }
 
 .alert-list {
-    list-style: none;
+	list-style: none;
 }
 
 .alert-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 0;
-    border-bottom: 1px solid #e2e8f0;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 0;
+	border-bottom: 1px solid #e2e8f0;
 }
 
 .alert-item:last-child {
-    border-bottom: none;
+	border-bottom: none;
 }
 
 .alert-icon svg {
-    color: var(--warning-color);
-    font-size: 18px;
+	color: var(--warning-color);
+	font-size: 18px;
 }
 
 .alert-message {
-    flex: 1;
-    font-size: 14px;
+	flex: 1;
+	font-size: 14px;
 }
 
 .alert-time {
-    font-size: 12px;
-    color: var(--gray-color);
+	font-size: 12px;
+	color: var(--gray-color);
 }
 
 /* Emergency Stop Button */
 .emergency-stop {
-    grid-column: 1 / -1;
-    display: flex;
-    justify-content: center;
+	grid-column: 1 / -1;
+	display: flex;
+	justify-content: center;
 }
 
 .emergency-stop-button {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 16px 32px;
-    background-color: var(--danger-color);
-    color: white;
-    border: none;
-    border-radius: var(--border-radius);
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-    box-shadow: var(--box-shadow);
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 16px 32px;
+	background-color: var(--danger-color);
+	color: white;
+	border: none;
+	border-radius: var(--border-radius);
+	font-size: 16px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: var(--transition);
+	box-shadow: var(--box-shadow);
 }
 
 .emergency-stop-button:hover {
-    background-color: #dc2626;
-    transform: translateY(-2px);
+	background-color: #dc2626;
+	transform: translateY(-2px);
 }
 
 .emergency-stop-button svg {
-    font-size: 20px;
+	font-size: 20px;
 }
 
 /* Responsive Design */
 @media (max-width: 1400px) {
-    .dashboard-grid {
-        grid-template-columns: repeat(8, 1fr);
-    }
+	.dashboard-grid {
+		grid-template-columns: repeat(8, 1fr);
+	}
 
-    .system-status,
-    .environmental-sensors,
-    .tracker-control {
-        grid-column: span 4;
-    }
+	.system-status,
+	.environmental-sensors,
+	.tracker-control {
+		grid-column: span 4;
+	}
 
-    .performance-charts {
-        grid-column: span 8;
-    }
+	.performance-charts {
+		grid-column: span 8;
+	}
 
-    .plant-requirements,
-    .alert-logs {
-        grid-column: span 4;
-    }
+	.plant-requirements,
+	.alert-logs {
+		grid-column: span 4;
+	}
 }
 
 @media (max-width: 1024px) {
-    .dashboard-grid {
-        grid-template-columns: repeat(4, 1fr);
-    }
+	.dashboard-grid {
+		grid-template-columns: repeat(4, 1fr);
+	}
 
-    .system-status,
-    .environmental-sensors,
-    .tracker-control,
-    .performance-charts,
-    .plant-requirements,
-    .alert-logs {
-        grid-column: span 4;
-    }
+	.system-status,
+	.environmental-sensors,
+	.tracker-control,
+	.performance-charts,
+	.plant-requirements,
+	.alert-logs {
+		grid-column: span 4;
+	}
 }
 
 @media (max-width: 768px) {
-    .dashboard-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-    }
+	.dashboard-header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 12px;
+	}
 
-    .header-info {
-        width: 100%;
-        justify-content: space-between;
-    }
+	.header-info {
+		width: 100%;
+		justify-content: space-between;
+	}
 
-    .sensor-grid {
-        grid-template-columns: 1fr;
-    }
+	.sensor-grid {
+		grid-template-columns: 1fr;
+	}
 
-    .status-indicators,
-    .angle-display {
-        grid-template-columns: 1fr;
-    }
+	.status-indicators,
+	.angle-display {
+		grid-template-columns: 1fr;
+	}
 }
 
 /* styling for tracker control */
 /* Manual Angle Control Styles */
 .manual-control {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #e2e8f0;
+	margin-top: 20px;
+	padding-top: 20px;
+	border-top: 1px solid #e2e8f0;
 }
 
 .angle-control label {
-    display: block;
-    font-size: 14px;
-    color: var(--gray-color);
-    margin-bottom: 8px;
+	display: block;
+	font-size: 14px;
+	color: var(--gray-color);
+	margin-bottom: 8px;
 }
 
 .angle-input-group {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+	display: flex;
+	align-items: center;
+	gap: 12px;
 }
 
 .angle-slider {
-    flex: 1;
-    height: 8px;
-    background: #e2e8f0;
-    border-radius: 4px;
-    outline: none;
+	flex: 1;
+	height: 8px;
+	background: #e2e8f0;
+	border-radius: 4px;
+	outline: none;
 }
 
 .angle-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    background: var(--primary-color);
-    border-radius: 50%;
-    cursor: pointer;
+	-webkit-appearance: none;
+	width: 20px;
+	height: 20px;
+	background: var(--primary-color);
+	border-radius: 50%;
+	cursor: pointer;
 }
 
 .angle-input-value {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    width: 80px;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	width: 80px;
 }
 
 .angle-number-input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    background-color: #f8fafc;
-    font-size: 14px;
-    text-align: center;
+	width: 100%;
+	padding: 8px;
+	border: 1px solid #e2e8f0;
+	border-radius: 8px;
+	background-color: #f8fafc;
+	font-size: 14px;
+	text-align: center;
 }
 
 .angle-apply-button {
-    padding: 8px 16px;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: var(--transition);
+	padding: 8px 16px;
+	background-color: var(--primary-color);
+	color: white;
+	border: none;
+	border-radius: 8px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: var(--transition);
 }
 
 .angle-apply-button:hover {
-    background-color: #4338ca;
+	background-color: #4338ca;
 }
 
 /* Plant Requirements Button */
 .send-requirements-button {
-    background-color: #4f46e5;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 15px;
-    font-weight: 500;
-    transition: background-color 0.3s;
-    width: 100%;
+	background-color: #4f46e5;
+	color: white;
+	border: none;
+	padding: 8px 16px;
+	border-radius: 4px;
+	cursor: pointer;
+	margin-top: 15px;
+	font-weight: 500;
+	transition: background-color 0.3s;
+	width: 100%;
 }
 
 .send-requirements-button:hover {
-    background-color: #4338ca;
+	background-color: #4338ca;
 }
 
 .send-requirements-button:disabled {
-    background-color: #9ca3af;
-    cursor: not-allowed;
+	background-color: #9ca3af;
+	cursor: not-allowed;
 }
 
 /* Plant Requirements Toggle Buttons */
 .protection-toggle {
-    display: flex;
-    gap: 8px;
-    margin-top: 8px;
+	display: flex;
+	gap: 8px;
+	margin-top: 8px;
 }
 
 .toggle-button {
-    flex: 1;
-    padding: 8px;
-    border: 1px solid #ddd;
-    background-color: #f8f9fa;
-    color: #333;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s;
+	flex: 1;
+	padding: 8px;
+	border: 1px solid #ddd;
+	background-color: #f8f9fa;
+	color: #333;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: all 0.2s;
 }
 
 .toggle-button.active {
-    background-color: #4f46e5;
-    color: white;
-    border-color: #4f46e5;
+	background-color: #4f46e5;
+	color: white;
+	border-color: #4f46e5;
 }
 
 /* Send Button */
 .send-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    padding: 10px;
-    margin-top: 16px;
-    background-color: #4f46e5;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	width: 100%;
+	padding: 10px;
+	margin-top: 16px;
+	background-color: #4f46e5;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: background-color 0.3s;
 }
 
 .send-button:hover {
-    background-color: #4338ca;
+	background-color: #4338ca;
 }
 
 .send-button:disabled {
-    background-color: #9ca3af;
-    cursor: not-allowed;
+	background-color: #9ca3af;
+	cursor: not-allowed;
 }
 
 .send-button svg {
-    font-size: 16px;
+	font-size: 16px;
+}
+
+/* Read-only Styles  */
+.read-only-value {
+	padding: 8px;
+	background: #f5f5f5;
+	border-radius: 4px;
+	color: #333;
+}
+
+.read-only-slider {
+	height: 8px;
+	background: #e0e0e0;
+	border-radius: 4px;
+	margin-top: 8px;
+	position: relative;
+}
+
+.read-only-slider .slider-track {
+	position: absolute;
+	height: 100%;
+	background: #4f46e5;
+	border-radius: 4px;
 }

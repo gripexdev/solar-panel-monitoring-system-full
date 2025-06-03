@@ -32,7 +32,10 @@ import { IoMdSettings as SettingsIcon } from "react-icons/io";
 import SolarPanel from "./components/SolarPanel";
 import "./SolarPanelDashboard2.css";
 
-function MonitoringDashboard() {
+function MonitoringDashboard({ userRole = "ADMIN" }) {
+	// Check if the user is an admin
+	const isAdmin = userRole === "ADMIN";
+
 	// State for all the data displayed in the UI
 	const [dateTime, setDateTime] = useState(
 		new Date().toISOString().slice(0, 16).replace("T", " ")
@@ -83,11 +86,11 @@ function MonitoringDashboard() {
 
 	// Function to get the current time of day as a fraction of the day (0 to 1)
 	const getCurrentTimeOfDay = () => {
-    const now = new Date();
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-    return (hours * 60 + minutes) / 1440; // 1440 minutes in a day
-};
+		const now = new Date();
+		const hours = now.getHours();
+		const minutes = now.getMinutes();
+		return (hours * 60 + minutes) / 1440; // 1440 minutes in a day
+	};
 
 	// WebSocket connection
 	const {
@@ -350,96 +353,100 @@ function MonitoringDashboard() {
 				</div>
 
 				{/* Tracker Control Card */}
-				<div className="dashboard-card tracker-control">
-					<div className="card-header">
-						<h2>
-							<SettingsIcon /> TRACKER CONTROL
-						</h2>
-					</div>
-					<div className="card-content">
-						<div className="control-modes">
-							<button
-								className={`control-button ${
-									controlMode === "MANUAL" ? "active" : ""
-								}`}
-								onClick={() => changeControlMode("MANUAL")}
-								disabled={systemStatus === "EMERGENCY"}
-							>
-								<ManualIcon /> MANUAL MODE
-							</button>
-							<button
-								className={`control-button ${
-									controlMode === "SAFETY" ? "active" : ""
-								}`}
-								onClick={() => changeControlMode("SAFETY")}
-								disabled={systemStatus === "EMERGENCY"}
-							>
-								<SafetyIcon /> SAFETY MODE
-							</button>
-							<button
-								className={`control-button ${
-									controlMode === "AUTOTRACK" ? "active" : ""
-								}`}
-								onClick={() => changeControlMode("AUTOTRACK")}
-								disabled={systemStatus === "EMERGENCY"}
-							>
-								<AutoIcon /> AUTOTRACK
-							</button>
+				{isAdmin && (
+					<div className="dashboard-card tracker-control">
+						<div className="card-header">
+							<h2>
+								<SettingsIcon /> TRACKER CONTROL
+							</h2>
 						</div>
-						<div className="angle-display">
-							<div className="angle-value">
-								<span>Target Angle</span>
-								<strong>{targetAngle}</strong>
-							</div>
-							<div className="limit-switch">
-								<span>Limit Switch</span>
-								<strong
-									className={limitSwitchState === "Triggered" ? "warning" : ""}
+						<div className="card-content">
+							<div className="control-modes">
+								<button
+									className={`control-button ${
+										controlMode === "MANUAL" ? "active" : ""
+									}`}
+									onClick={() => changeControlMode("MANUAL")}
+									disabled={systemStatus === "EMERGENCY"}
 								>
-									{limitSwitchState}
-								</strong>
+									<ManualIcon /> MANUAL MODE
+								</button>
+								<button
+									className={`control-button ${
+										controlMode === "SAFETY" ? "active" : ""
+									}`}
+									onClick={() => changeControlMode("SAFETY")}
+									disabled={systemStatus === "EMERGENCY"}
+								>
+									<SafetyIcon /> SAFETY MODE
+								</button>
+								<button
+									className={`control-button ${
+										controlMode === "AUTOTRACK" ? "active" : ""
+									}`}
+									onClick={() => changeControlMode("AUTOTRACK")}
+									disabled={systemStatus === "EMERGENCY"}
+								>
+									<AutoIcon /> AUTOTRACK
+								</button>
 							</div>
-						</div>
-						{controlMode === "MANUAL" && (
-							<div className="manual-control">
-								<div className="angle-control">
-									<label>Set Panel Angle (0-180°)</label>
-									<div className="angle-input-group">
-										<input
-											type="range"
-											min="0"
-											max="180"
-											value={manualAngle}
-											onChange={(e) => setManualAngle(Number(e.target.value))}
-											className="angle-slider"
-										/>
-										<div className="angle-input-value">
+							<div className="angle-display">
+								<div className="angle-value">
+									<span>Target Angle</span>
+									<strong>{targetAngle}</strong>
+								</div>
+								<div className="limit-switch">
+									<span>Limit Switch</span>
+									<strong
+										className={
+											limitSwitchState === "Triggered" ? "warning" : ""
+										}
+									>
+										{limitSwitchState}
+									</strong>
+								</div>
+							</div>
+							{controlMode === "MANUAL" && (
+								<div className="manual-control">
+									<div className="angle-control">
+										<label>Set Panel Angle (0-180°)</label>
+										<div className="angle-input-group">
 											<input
-												type="number"
+												type="range"
 												min="0"
 												max="180"
 												value={manualAngle}
-												onChange={(e) =>
-													setManualAngle(
-														Math.min(180, Math.max(0, Number(e.target.value)))
-													)
-												}
-												className="angle-number-input"
+												onChange={(e) => setManualAngle(Number(e.target.value))}
+												className="angle-slider"
 											/>
-											<span>°</span>
+											<div className="angle-input-value">
+												<input
+													type="number"
+													min="0"
+													max="180"
+													value={manualAngle}
+													onChange={(e) =>
+														setManualAngle(
+															Math.min(180, Math.max(0, Number(e.target.value)))
+														)
+													}
+													className="angle-number-input"
+												/>
+												<span>°</span>
+											</div>
+											<button
+												onClick={() => sendManualAngle(manualAngle)}
+												className="angle-apply-button"
+											>
+												Apply
+											</button>
 										</div>
-										<button
-											onClick={() => sendManualAngle(manualAngle)}
-											className="angle-apply-button"
-										>
-											Apply
-										</button>
 									</div>
 								</div>
-							</div>
-						)}
+							)}
+						</div>
 					</div>
-				</div>
+				)}
 
 				{/* Performance Charts Card */}
 				<div className="dashboard-card performance-charts">
@@ -500,75 +507,98 @@ function MonitoringDashboard() {
 					<div className="card-content">
 						<div className="requirement-item">
 							<label>Sun Rays Period</label>
-							<select
-								value={plantRequirements.sunRays}
-								onChange={(e) =>
-									setPlantRequirements({
-										...plantRequirements,
-										sunRays: e.target.value,
-									})
-								}
-								className="time-select"
-							>
-								<option value="Morning">Morning</option>
-								<option value="Afternoon">Afternoon</option>
-								<option value="Evening">Evening</option>
-							</select>
+							{isAdmin ? (
+								<select
+									value={plantRequirements.sunRays}
+									onChange={(e) =>
+										setPlantRequirements({
+											...plantRequirements,
+											sunRays: e.target.value,
+										})
+									}
+									className="time-select"
+								>
+									<option value="Morning">Morning</option>
+									<option value="Afternoon">Afternoon</option>
+									<option value="Evening">Evening</option>
+								</select>
+							) : (
+								<div className="read-only-value">
+									{plantRequirements.sunRays}
+								</div>
+							)}
 						</div>
 						<div className="requirement-item">
 							<label>Shading: {plantRequirements.shading}%</label>
-							<input
-								type="range"
-								min="0"
-								max="100"
-								value={plantRequirements.shading}
-								onChange={(e) =>
-									setPlantRequirements({
-										...plantRequirements,
-										shading: parseInt(e.target.value),
-									})
-								}
-								className="shading-slider"
-							/>
+							{isAdmin ? (
+								<input
+									type="range"
+									min="0"
+									max="100"
+									value={plantRequirements.shading}
+									onChange={(e) =>
+										setPlantRequirements({
+											...plantRequirements,
+											shading: parseInt(e.target.value),
+										})
+									}
+									className="shading-slider"
+								/>
+							) : (
+								<div className="read-only-slider">
+									<div
+										className="slider-track"
+										style={{ width: `${plantRequirements.shading}%` }}
+									></div>
+								</div>
+							)}
 						</div>
 						<div className="requirement-item">
 							<label>Night Frost Protection</label>
-							<div className="protection-toggle">
-								<button
-									className={`toggle-button ${
-										plantRequirements.nightFrostProtection ? "active" : ""
-									}`}
-									onClick={() =>
-										setPlantRequirements({
-											...plantRequirements,
-											nightFrostProtection: true,
-										})
-									}
-								>
-									Yes
-								</button>
-								<button
-									className={`toggle-button ${
-										!plantRequirements.nightFrostProtection ? "active" : ""
-									}`}
-									onClick={() =>
-										setPlantRequirements({
-											...plantRequirements,
-											nightFrostProtection: false,
-										})
-									}
-								>
-									No
-								</button>
-							</div>
+							{isAdmin ? (
+								<div className="protection-toggle">
+									<button
+										className={`toggle-button ${
+											plantRequirements.nightFrostProtection ? "active" : ""
+										}`}
+										onClick={() =>
+											setPlantRequirements({
+												...plantRequirements,
+												nightFrostProtection: true,
+											})
+										}
+									>
+										Yes
+									</button>
+									<button
+										className={`toggle-button ${
+											!plantRequirements.nightFrostProtection ? "active" : ""
+										}`}
+										onClick={() =>
+											setPlantRequirements({
+												...plantRequirements,
+												nightFrostProtection: false,
+											})
+										}
+									>
+										No
+									</button>
+								</div>
+							) : (
+								<div className="read-only-value">
+									{plantRequirements.nightFrostProtection ? "Yes" : "No"}
+								</div>
+							)}
 						</div>
-						<button
-							className="send-button"
-							onClick={sendPlantRequirements}
-							disabled={!connected}
-						>
-							<SettingsIcon /> SEND TO SENSOR
-						</button>
+						{isAdmin && (
+							<button
+								className="send-button"
+								onClick={sendPlantRequirements}
+								disabled={!connected}
+							>
+								<SettingsIcon /> SEND TO SENSOR
+							</button>
+						)}
 					</div>
 				</div>
 
@@ -604,11 +634,16 @@ function MonitoringDashboard() {
 			</div>
 
 			{/* Emergency Stop Button */}
-			<div className="emergency-stop">
-				<button className="emergency-stop-button" onClick={handleEmergencyStop}>
-					<EmergencyStopIcon /> EMERGENCY STOP
-				</button>
-			</div>
+			{isAdmin && (
+				<div className="emergency-stop">
+					<button
+						className="emergency-stop-button"
+						onClick={handleEmergencyStop}
+					>
+						<EmergencyStopIcon /> EMERGENCY STOP
+					</button>
+				</div>
+			)}
 		</div>
 	);
 }
