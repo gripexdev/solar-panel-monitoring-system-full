@@ -29,6 +29,7 @@ public class MqttService implements MqttCallback {
     private final MqttClient mqttClient;
     private final SimpMessagingTemplate messagingTemplate;
     private final ObjectMapper objectMapper;
+    private SensorDataDto latestSensorData;
 
     @Value("${mqtt.topic.sensor-data}")
     private String sensorDataTopic;
@@ -80,6 +81,7 @@ public class MqttService implements MqttCallback {
             logger.debug("Received message on topic {}: {}", topic, payload);
 
             SensorDataDto sensorData = objectMapper.readValue(payload, SensorDataDto.class);
+            this.latestSensorData = sensorData;
             messagingTemplate.convertAndSend("/topic/sensor-data", sensorData);
             // Debbuging
             logger.info("Raw payload: {}", payload);
@@ -136,5 +138,10 @@ public class MqttService implements MqttCallback {
             logger.error("Error serializing plant requirements", e);
             throw new MqttException(e);
         }
+    }
+
+    // Method to get the latest sensor data
+    public SensorDataDto getLatestSensorData() {
+        return latestSensorData;
     }
 }

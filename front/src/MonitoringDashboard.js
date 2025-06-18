@@ -141,6 +141,22 @@ function MonitoringDashboard({ userRole = "ADMIN" }) {
 		}
 	);
 
+	// Request initial data when WebSocket connects
+	useEffect(() => {
+		if (wsConnected && stompClient) {
+			// Request initial data
+			stompClient.publish({
+				destination: "/app/request-initial-data",
+				body: JSON.stringify({ type: "INITIAL_DATA_REQUEST" })
+			});
+		}
+	}, [wsConnected, stompClient]);
+
+	// Update connection status
+	useEffect(() => {
+		setConnected(wsConnected);
+	}, [wsConnected]);
+
 	// send plant requirements to the mqtt broker
 	const sendPlantRequirements = () => {
 		if (stompClient && stompClient.connected) {
@@ -154,11 +170,6 @@ function MonitoringDashboard({ userRole = "ADMIN" }) {
 			]);
 		}
 	};
-
-	// Update connection status
-	useEffect(() => {
-		setConnected(wsConnected);
-	}, [wsConnected]);
 
 	// change controle mode command
 	const changeControlMode = (mode) => {

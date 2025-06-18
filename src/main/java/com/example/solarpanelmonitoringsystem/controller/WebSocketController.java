@@ -68,4 +68,20 @@ public class WebSocketController {
         logger.info("Received plant requirements: {}", requirements);
         mqttService.publishPlantRequirements(requirements);
     }
+
+    // Handle initial data request from clients
+    @MessageMapping("/request-initial-data")
+    public void handleInitialDataRequest() {
+        logger.info("Received request for initial data");
+        try {
+            // Get the latest sensor data from MQTT service
+            SensorDataDto latestData = mqttService.getLatestSensorData();
+            if (latestData != null) {
+                // Send the latest data to the client
+                messagingTemplate.convertAndSend("/topic/sensor-data", latestData);
+            }
+        } catch (Exception e) {
+            logger.error("Error handling initial data request", e);
+        }
+    }
 }
