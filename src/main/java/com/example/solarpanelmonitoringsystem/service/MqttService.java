@@ -3,12 +3,15 @@ package com.example.solarpanelmonitoringsystem.service;
 import com.example.solarpanelmonitoringsystem.dto.ControlCommandDto;
 import com.example.solarpanelmonitoringsystem.dto.PlantRequirementsDto;
 import com.example.solarpanelmonitoringsystem.dto.SensorDataDto;
+import com.example.solarpanelmonitoringsystem.entity.SensorData;
+import com.example.solarpanelmonitoringsystem.repository.SensorDataRepo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import org.eclipse.paho.client.mqttv3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -31,6 +34,8 @@ public class MqttService implements MqttCallback {
     private final ObjectMapper objectMapper;
     private SensorDataDto latestSensorData;
 
+    private SensorDataRepo sensorDataRepo;
+
     @Value("${mqtt.topic.sensor-data}")
     private String sensorDataTopic;
 
@@ -42,10 +47,11 @@ public class MqttService implements MqttCallback {
 
     public MqttService(MqttClient mqttClient,
                        SimpMessagingTemplate messagingTemplate,
-                       ObjectMapper objectMapper) {
+                       ObjectMapper objectMapper, SensorDataRepo sensorDataRepo) {
         this.mqttClient = mqttClient;
         this.messagingTemplate = messagingTemplate;
         this.objectMapper = objectMapper;
+        this.sensorDataRepo = sensorDataRepo;
     }
 
     @PostConstruct
@@ -81,6 +87,20 @@ public class MqttService implements MqttCallback {
             logger.debug("Received message on topic {}: {}", topic, payload);
 
             SensorDataDto sensorData = objectMapper.readValue(payload, SensorDataDto.class);
+
+            // Saving the sensor data to the database
+            SensorData sensorData1 = new SensorData();
+            sensorData1.setHumidity(sensorData.getHumidity());
+            sensorData1.setTemperature(sensorData.getTemperature());
+            sensorData1.setRadiation(sensorData.getRadiation());
+            sensorData1.setPvAngle(sensorData.getPvAngle());
+            sensorData1.setSwitchState(sensorData.getSwitchState());
+            sensorData1.setWindSpeed(sensorData.getWindSpeed());
+            sensorData1.setRainDetected(sensorData.isRainDetected());
+            sensorData1.setSnow(sensorData.isSnow());
+            sensorData1.setTimestamp(sensorData.getTimestamp());
+            sensorDataRepo.save(sensorData1);
+
             this.latestSensorData = sensorData;
             messagingTemplate.convertAndSend("/topic/sensor-data", sensorData);
             // Debbuging
