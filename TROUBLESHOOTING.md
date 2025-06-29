@@ -1,56 +1,58 @@
 # Troubleshooting Guide - Railway Deployment
 
 ## Current Issue
-The application starts successfully but appears to stop after MQTT service initialization.
+The application fails to start because the `start.sh` script is not found in the container.
 
 ## Analysis of Current Logs
 From the logs, we can see:
-✅ Database connection successful
-✅ MQTT connection successful  
-✅ Application initialization progressing
-❌ Application stops after MQTT service initialization
+❌ `chmod: cannot access 'start.sh': No such file or directory`
+❌ Container stops immediately
 
-## Potential Causes and Solutions
+## Root Cause
+Railway is not including the `start.sh` file in the deployment container, causing the startup command to fail.
 
-### 1. Application Startup Process
-**Issue**: The application might be failing during the final startup phase
-**Solution**: Added comprehensive logging to track startup process
+## Solutions Applied
 
-### 2. Health Check Configuration
-**Issue**: Railway health check might be failing
-**Solution**: 
-- Changed health check path from `/actuator/health` to `/health`
-- Reduced health check timeout to 300 seconds
-- Added multiple health check endpoints
+### 1. Updated Railway Configuration
+Changed `railway.json` to use direct Java command instead of startup script:
+```json
+{
+  "deploy": {
+    "startCommand": "java -Xmx512m -Xms256m -XX:+UseG1GC -jar target/solar-panel-monitoring-system-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod"
+  }
+}
+```
 
-### 3. Memory/Resource Issues
-**Issue**: Application might be running out of memory
-**Solution**: Added Java memory options in startup script
+### 2. Updated Dockerfile
+- Added startup script copying
+- Made script executable
+- Updated CMD to use optimized Java settings
 
-### 4. Port Binding Issues
-**Issue**: Application might not be binding to the correct port
-**Solution**: Ensured PORT environment variable is properly configured
+### 3. Added Alternative Deployment Methods
+- Created `Procfile` for Railway deployment
+- Added `.dockerignore` to ensure proper file inclusion
 
 ## Debugging Steps
 
-### Step 1: Check Application Logs
-Look for these key log messages:
+### Step 1: Verify File Structure
+Ensure these files are in your repository:
+- `railway.json`
+- `Procfile`
+- `start.sh`
+- `Dockerfile`
+
+### Step 2: Check Railway Build
+Monitor the build logs for:
+- Successful Maven build
+- JAR file creation
+- No file access errors
+
+### Step 3: Monitor Startup Logs
+Look for these success indicators:
+- `"Starting Solar Panel Monitoring System Application..."`
 - `"🚀 Application started event triggered"`
 - `"✅ Application ready event triggered"`
 - `"Default admin user created successfully"`
-- `"CommandLineRunner completed"`
-
-### Step 2: Test Health Endpoints
-After deployment, test these endpoints:
-- `https://your-app.railway.app/health`
-- `https://your-app.railway.app/`
-- `https://your-app.railway.app/test`
-- `https://your-app.railway.app/actuator/health`
-
-### Step 3: Check Railway Dashboard
-- Verify the service shows as "Deployed"
-- Check if there are any error messages
-- Monitor resource usage
 
 ## Environment Variables Checklist
 Ensure these are set in Railway:
@@ -62,27 +64,34 @@ PORT=8080
 ```
 
 ## Recent Changes Made
-1. **Enhanced Logging**: Added comprehensive startup logging
-2. **Startup Listener**: Added application lifecycle tracking
-3. **Health Endpoints**: Added multiple health check endpoints
-4. **Startup Script**: Created custom startup script with memory optimization
-5. **Railway Config**: Updated health check settings
+1. **Fixed Startup Command**: Removed dependency on startup script
+2. **Direct Java Command**: Using optimized Java settings directly in railway.json
+3. **Alternative Methods**: Added Procfile for Railway deployment
+4. **Docker Configuration**: Updated Dockerfile to include startup script
+5. **File Management**: Added .dockerignore for proper file inclusion
 
 ## Next Steps
-1. Deploy the updated code
-2. Monitor the logs for the new startup messages
-3. Test the health endpoints
-4. If still failing, check Railway logs for any error messages
+1. Deploy the updated code with the new railway.json configuration
+2. Monitor the build and startup logs
+3. Test health endpoints after successful deployment
+4. Verify application functionality
 
 ## Expected Success Indicators
-- Application logs show "Application ready event triggered"
+- No "start.sh not found" errors
+- Application starts with Java command
 - Health endpoints return 200 OK responses
 - Railway dashboard shows service as "Deployed"
-- No error messages in logs after startup
 
 ## Fallback Options
 If the issue persists:
-1. Try deploying without MQTT (remove MQTT environment variables)
-2. Check if database connection is stable
-3. Verify all environment variables are correctly set
-4. Consider using a different port or configuration 
+1. Try using the Procfile method instead of railway.json
+2. Check if all environment variables are correctly set
+3. Verify database connection is stable
+4. Consider using a different deployment platform
+
+## Health Check Endpoints
+After successful deployment, test:
+- `https://your-app.railway.app/health`
+- `https://your-app.railway.app/`
+- `https://your-app.railway.app/test`
+- `https://your-app.railway.app/actuator/health` 

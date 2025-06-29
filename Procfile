@@ -1,0 +1,1 @@
+web: java -Xmx512m -Xms256m -XX:+UseG1GC -jar target/solar-panel-monitoring-system-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod 

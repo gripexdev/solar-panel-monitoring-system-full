@@ -1,0 +1,28 @@
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Runtime data
+target/
+!target/solar-panel-monitoring-system-0.0.1-SNAPSHOT.jar
+
+# Temporary files
+*.tmp
+*.temp
+
+# Documentation
+README.md
+DEPLOYMENT_GUIDE.md
+TROUBLESHOOTING.md 
