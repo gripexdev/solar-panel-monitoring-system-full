@@ -5,10 +5,15 @@ import com.example.solarpanelmonitoringsystem.repository.UsersRepo;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import io.micrometer.core.instrument.binder.system.ProcessorMetrics;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.actuate.autoconfigure.metrics.SystemMetricsAutoConfiguration;
 
 @SpringBootApplication
+@EnableAutoConfiguration(exclude = { SystemMetricsAutoConfiguration.class })
 public class SolarPanelMonitoringSystemApplication {
 
     public static void main(String[] args) {
@@ -32,5 +37,15 @@ public class SolarPanelMonitoringSystemApplication {
 
             System.out.println("Default admin user created.");
         };
+    }
+}
+
+// Add this configuration to disable ProcessorMetrics
+@Configuration
+class DisableProcessorMetricsConfig {
+    @Bean
+    public ProcessorMetrics processorMetrics() {
+        // Return null to disable the bean
+        return null;
     }
 }
