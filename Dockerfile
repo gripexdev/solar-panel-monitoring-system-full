@@ -18,4 +18,4 @@ RUN ./mvnw clean package -DskipTests
 EXPOSE 8080
 
 # Run the application
-CMD ["java", "-jar", "target/solar-panel-monitoring-system-0.0.1-SNAPSHOT.jar", "--spring.profiles.active=prod"] 
+CMD ["java", "-jar", "target/solar-panel-monitoring-system-0.0.1-SNAPSHOT.jar", "--spring.profiles.active=prod"]
