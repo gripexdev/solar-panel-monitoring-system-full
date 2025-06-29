@@ -57,9 +57,12 @@ public class MqttService implements MqttCallback {
     @PostConstruct
     public void init() {
         try {
-            if (mqttClient != null) {
+            if (mqttClient != null && mqttClient.isConnected()) {
                 mqttClient.setCallback(this);
                 subscribeToTopics();
+                logger.info("MQTT service initialized successfully");
+            } else {
+                logger.warn("MQTT client is null or not connected. MQTT functionality will be disabled.");
             }
         } catch (Exception e) {
             logger.error("Error initializing MQTT service", e);
@@ -67,6 +70,11 @@ public class MqttService implements MqttCallback {
     }
 
     private void subscribeToTopics() throws MqttException {
+        if (mqttClient == null || !mqttClient.isConnected()) {
+            logger.warn("Cannot subscribe to topics: MQTT client is null or not connected");
+            return;
+        }
+        
         if (sensorDataTopic != null && !sensorDataTopic.isEmpty()) {
             mqttClient.subscribe(sensorDataTopic);
             logger.info("Subscribed to topic: {}", sensorDataTopic);
@@ -117,6 +125,11 @@ public class MqttService implements MqttCallback {
     }
 
     public void publishMessage(String topic, String message) throws MqttException {
+        if (mqttClient == null || !mqttClient.isConnected()) {
+            logger.warn("Cannot publish message: MQTT client is null or not connected");
+            return;
+        }
+        
         if (topic == null || topic.isEmpty()) {
             throw new IllegalArgumentException("Topic cannot be null or empty");
         }
@@ -130,6 +143,11 @@ public class MqttService implements MqttCallback {
 
     // This method is used to publish control command to the MQTT broker
     public void publishControlCommand(ControlCommandDto command) throws MqttException {
+        if (mqttClient == null || !mqttClient.isConnected()) {
+            logger.warn("Cannot publish control command: MQTT client is null or not connected");
+            return;
+        }
+        
         if (controlTopic == null || controlTopic.isEmpty()) {
             throw new IllegalStateException("Control topic not configured");
         }
@@ -146,6 +164,11 @@ public class MqttService implements MqttCallback {
 
     // This method is used to publish plant requirements to the MQTT broker
     public void publishPlantRequirements(PlantRequirementsDto requirements) throws MqttException {
+        if (mqttClient == null || !mqttClient.isConnected()) {
+            logger.warn("Cannot publish plant requirements: MQTT client is null or not connected");
+            return;
+        }
+        
         if (plantRequirementsTopic == null || plantRequirementsTopic.isEmpty()) {
             throw new IllegalStateException("Plant requirements topic not configured");
         }

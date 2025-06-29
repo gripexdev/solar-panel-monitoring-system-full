@@ -45,12 +45,20 @@ public class MqttConfig {
             options.setConnectionTimeout(connectionTimeout);
             options.setKeepAliveInterval(keepAliveInterval);
 
-            client.connect(options);
-            logger.info("Connected to MQTT broker at {}", brokerUrl);
+            // Try to connect but don't fail the application if it doesn't work
+            try {
+                client.connect(options);
+                logger.info("Connected to MQTT broker at {}", brokerUrl);
+            } catch (MqttException e) {
+                logger.warn("Failed to connect to MQTT broker at startup: {}. Application will continue without MQTT.", e.getMessage());
+                // Don't throw the exception, just log it and continue
+            }
+            
             return client;
-        } catch (MqttException e) {
-            logger.error("Failed to connect to MQTT broker", e);
-            throw new RuntimeException("Failed to connect to MQTT broker", e);
+        } catch (Exception e) {
+            logger.error("Failed to create MQTT client", e);
+            // Return null instead of throwing exception to allow application to start
+            return null;
         }
     }
 }

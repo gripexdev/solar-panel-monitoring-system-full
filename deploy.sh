@@ -95,4 +95,30 @@ esac
 echo ""
 echo "📚 For detailed instructions, see DEPLOYMENT_GUIDE.md"
 echo "🔧 Make sure to update environment variables with your actual values"
-echo "🌐 Your app will be available at the URL provided by your chosen platform" 
+echo "🌐 Your app will be available at the URL provided by your chosen platform"
+
+echo "Starting deployment process..."
+
+# Clean and build the project
+echo "Cleaning and building the project..."
+./mvnw clean package -DskipTests
+
+# Check if build was successful
+if [ $? -eq 0 ]; then
+    echo "Build successful!"
+    echo "JAR file created at: target/solar-panel-monitoring-system-0.0.1-SNAPSHOT.jar"
+    
+    # Check if JAR file exists
+    if [ -f "target/solar-panel-monitoring-system-0.0.1-SNAPSHOT.jar" ]; then
+        echo "JAR file verification successful!"
+        echo "Ready for deployment!"
+    else
+        echo "ERROR: JAR file not found!"
+        exit 1
+    fi
+else
+    echo "ERROR: Build failed!"
+    exit 1
+fi
+
+echo "Deployment preparation completed!" 

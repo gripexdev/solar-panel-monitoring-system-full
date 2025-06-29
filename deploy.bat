@@ -85,4 +85,30 @@ echo.
 echo 📚 For detailed instructions, see DEPLOYMENT_GUIDE.md
 echo 🔧 Make sure to update environment variables with your actual values
 echo 🌐 Your app will be available at the URL provided by your chosen platform
+
+echo Starting deployment process...
+
+REM Clean and build the project
+echo Cleaning and building the project...
+call mvnw.cmd clean package -DskipTests
+
+REM Check if build was successful
+if %ERRORLEVEL% EQU 0 (
+    echo Build successful!
+    echo JAR file created at: target/solar-panel-monitoring-system-0.0.1-SNAPSHOT.jar
+    
+    REM Check if JAR file exists
+    if exist "target\solar-panel-monitoring-system-0.0.1-SNAPSHOT.jar" (
+        echo JAR file verification successful!
+        echo Ready for deployment!
+    ) else (
+        echo ERROR: JAR file not found!
+        exit /b 1
+    )
+) else (
+    echo ERROR: Build failed!
+    exit /b 1
+)
+
+echo Deployment preparation completed!
 pause 

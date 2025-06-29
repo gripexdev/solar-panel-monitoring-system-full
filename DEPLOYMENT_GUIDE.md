@@ -1,138 +1,147 @@
-# Solar Panel Monitoring System - Free Deployment Guide
+# Solar Panel Monitoring System - Deployment Guide
 
 ## Overview
-This guide will help you deploy your Solar Panel Monitoring System for free using Railway (recommended) or other free platforms.
+This guide will help you deploy the Solar Panel Monitoring System backend to Railway.
 
 ## Prerequisites
-- GitHub account
-- Railway account (free at railway.app)
-- Basic understanding of Git
+- Railway account
+- MySQL database (already deployed)
+- MQTT broker credentials (optional, system will work without MQTT)
 
-## Option 1: Railway Deployment (Recommended)
+## Environment Variables Setup
 
-### Step 1: Prepare Your Repository
-1. Fork or clone the repository to your GitHub account
-2. Make sure all the deployment files are in place:
-   - `Dockerfile` (backend)
-   - `front/Dockerfile` (frontend)
-   - `railway.json`
-   - `src/main/resources/application-prod.properties`
+### Required Environment Variables
+Set these in your Railway project settings:
 
-### Step 2: Deploy Backend to Railway
-1. Go to [railway.app](https://railway.app) and sign up/login
-2. Click "New Project" → "Deploy from GitHub repo"
-3. Select your repository
-4. Railway will automatically detect it's a Java project
-5. Add environment variables in Railway dashboard:
-   ```
-   SPRING_PROFILES_ACTIVE=prod
-   PORT=8080
-   DATABASE_URL=mysql://your-mysql-url
-   DATABASE_USERNAME=your-username
-   DATABASE_PASSWORD=your-password
-   MQTT_BROKER_URL=ssl://z8865828.ala.us-east-1.emqxsl.com:8883
-   MQTT_USERNAME=othmane
-   MQTT_PASSWORD=othmane
-   ```
-
-### Step 3: Add MySQL Database
-1. In your Railway project, click "New" → "Database" → "MySQL"
-2. Railway will automatically create a MySQL database
-3. Copy the database connection details and update your environment variables
-
-### Step 4: Deploy Frontend
-1. Create a new service in Railway for the frontend
-2. Set the source directory to `front`
-3. Add environment variable:
-   ```
-   REACT_APP_API_URL=https://your-backend-url.railway.app
-   ```
-
-## Option 2: Render Deployment
-
-### Backend Deployment
-1. Go to [render.com](https://render.com) and sign up
-2. Create a new "Web Service"
-3. Connect your GitHub repository
-4. Configure:
-   - **Build Command**: `./mvnw clean package -DskipTests`
-   - **Start Command**: `java -jar target/solar-panel-monitoring-system-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod`
-   - **Environment**: Java
-5. Add environment variables (same as Railway)
-
-### Database Setup
-1. Create a new "PostgreSQL" service in Render
-2. Update your `application-prod.properties` to use PostgreSQL:
-   ```properties
-   spring.datasource.driver-class-name=org.postgresql.Driver
-   ```
-
-### Frontend Deployment
-1. Create a new "Static Site" service
-2. Set build command: `npm run build`
-3. Set publish directory: `build`
-
-## Option 3: Vercel + PlanetScale
-
-### Backend (Vercel Functions)
-1. Create a new Vercel project
-2. Convert your Spring Boot app to use Vercel functions
-3. This requires more code changes but is completely free
-
-### Database (PlanetScale)
-1. Sign up at [planetscale.com](https://planetscale.com)
-2. Create a new MySQL database
-3. Use the connection string in your app
-
-### Frontend (Vercel)
-1. Deploy React app to Vercel
-2. Vercel provides excellent React hosting
-
-## Environment Variables Reference
-
-### Backend Variables
-```bash
-SPRING_PROFILES_ACTIVE=prod
+```
+DATABASE_URL=jdbc:mysql://your-mysql-host:3306/your-database-name
+DATABASE_USERNAME=your-database-username
+DATABASE_PASSWORD=your-database-password
 PORT=8080
-DATABASE_URL=jdbc:mysql://host:port/database
-DATABASE_USERNAME=username
-DATABASE_PASSWORD=password
+```
+
+### Optional Environment Variables
+```
 MQTT_BROKER_URL=ssl://your-mqtt-broker:8883
 MQTT_USERNAME=your-mqtt-username
 MQTT_PASSWORD=your-mqtt-password
 ```
 
-### Frontend Variables
+## Deployment Steps
+
+### 1. Prepare Your Code
 ```bash
-REACT_APP_API_URL=https://your-backend-url.com
+# Clean and build the project
+./mvnw clean package -DskipTests
 ```
+
+### 2. Deploy to Railway
+1. Connect your GitHub repository to Railway
+2. Railway will automatically detect the Java project
+3. Set the environment variables in Railway dashboard
+4. Deploy
+
+### 3. Verify Deployment
+After deployment, check these endpoints:
+- `https://your-app.railway.app/` - Should return API info
+- `https://your-app.railway.app/health` - Should return health status
+- `https://your-app.railway.app/actuator/health` - Spring Boot health check
 
 ## Troubleshooting
 
 ### Common Issues
-1. **Build Failures**: Check if all dependencies are in `pom.xml`
-2. **Database Connection**: Verify database URL format and credentials
-3. **CORS Issues**: Update CORS configuration in `CorsConfig.java`
-4. **Port Issues**: Make sure `PORT` environment variable is set
 
-### Health Check
-Your app includes a health check endpoint at `/actuator/health` for monitoring.
+#### 1. Application Fails to Start
+**Symptoms**: Application stops during startup
+**Solutions**:
+- Check environment variables are set correctly
+- Verify database connection
+- Check logs for specific error messages
 
-## Cost Breakdown
-- **Railway**: Free tier includes 500 hours/month
-- **Render**: Free tier includes 750 hours/month  
-- **Vercel**: Completely free for personal projects
-- **PlanetScale**: Free tier includes 1 database
+#### 2. Health Check Fails
+**Symptoms**: Railway shows deployment failed due to health check
+**Solutions**:
+- Ensure `/actuator/health` endpoint is accessible
+- Check if application is binding to correct port
+- Verify database connection
 
-## Next Steps
-1. Set up automatic deployments from GitHub
-2. Configure custom domains (if needed)
-3. Set up monitoring and alerts
-4. Implement CI/CD pipeline
+#### 3. MQTT Connection Issues
+**Symptoms**: MQTT connection errors in logs
+**Solutions**:
+- MQTT is now optional - application will start without it
+- Check MQTT credentials if you want MQTT functionality
+- Application will log warnings but continue running
+
+#### 4. Database Connection Issues
+**Symptoms**: Database connection errors
+**Solutions**:
+- Verify DATABASE_URL format: `jdbc:mysql://host:port/database`
+- Check database credentials
+- Ensure database is accessible from Railway
+
+### Log Analysis
+Check Railway logs for these key messages:
+- `"Solar Panel Monitoring System is running"` - Application started successfully
+- `"Default admin user created successfully"` - Database connection working
+- `"MQTT service initialized successfully"` - MQTT working (optional)
+- `"Connected to MQTT broker"` - MQTT connection successful (optional)
+
+### Health Check Endpoints
+The application provides multiple health check endpoints:
+- `/` - Basic API info
+- `/health` - Simple health check
+- `/actuator/health` - Spring Boot health check (used by Railway)
+
+## Configuration Files
+
+### railway.json
+```json
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "startCommand": "java -jar target/solar-panel-monitoring-system-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod",
+    "healthcheckPath": "/actuator/health",
+    "healthcheckTimeout": 600,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 5
+  }
+}
+```
+
+### application-prod.properties
+Key settings for production:
+- Database configuration via environment variables
+- MQTT configuration (optional)
+- Health check endpoints enabled
+- Logging configuration
+
+## Security
+- JWT authentication enabled
+- CORS configured for frontend access
+- Health endpoints are public
+- All other endpoints require authentication
+
+## Monitoring
+- Application logs available in Railway dashboard
+- Health check endpoints for monitoring
+- Database connection status in logs
+- MQTT connection status in logs (if configured)
 
 ## Support
 If you encounter issues:
-1. Check the platform's documentation
-2. Review the logs in your deployment platform
-3. Verify all environment variables are set correctly
-4. Test locally with the same configuration 
+1. Check Railway logs for error messages
+2. Verify environment variables are set correctly
+3. Test database connection
+4. Check if the application is binding to the correct port
+5. Verify health check endpoints are accessible
+
+## Recent Fixes Applied
+- Made MQTT connection optional (application starts without MQTT)
+- Added proper health check endpoints
+- Improved error handling in startup process
+- Added comprehensive logging
+- Fixed security configuration for health endpoints
+- Increased health check timeout for Railway 
