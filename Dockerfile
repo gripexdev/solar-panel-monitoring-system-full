@@ -11,8 +11,9 @@ COPY .mvn .mvn
 # Copy source code
 COPY src src
 
-# Build the application
-RUN ./mvnw clean package -DskipTests
+# Force clean build for Railway troubleshooting
+RUN ./mvnw clean
+RUN ./mvnw package -DskipTests
 
 # Expose port
 EXPOSE 8080
