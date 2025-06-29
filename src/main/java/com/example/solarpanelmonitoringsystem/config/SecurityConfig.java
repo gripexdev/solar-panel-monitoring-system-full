@@ -38,7 +38,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasAnyAuthority("ADMIN") // Admin-only paths
                         .requestMatchers("/user/**").hasAnyAuthority("USER") // User-only paths
                         .requestMatchers("/adminuser/**").hasAnyAuthority("ADMIN", "USER") // Both role can access
-                        .requestMatchers("/actuator/**", "/health", "/").permitAll() // Health check and root path
+                        .requestMatchers("/actuator/**", "/health", "/", "/test").permitAll() // Health check, root path, and test endpoint
                         .anyRequest().authenticated()) // All other paths need login
                 // Don't store the sessions on the server (stateless)
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

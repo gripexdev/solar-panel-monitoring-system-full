@@ -24,6 +24,16 @@ public class HealthController {
         response.put("message", "Solar Panel Monitoring System API");
         response.put("version", "1.0.0");
         response.put("status", "running");
+        response.put("timestamp", System.currentTimeMillis());
+        return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/test")
+    public ResponseEntity<Map<String, Object>> test() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Test endpoint working");
+        response.put("status", "success");
+        response.put("timestamp", System.currentTimeMillis());
         return ResponseEntity.ok(response);
     }
 } 
