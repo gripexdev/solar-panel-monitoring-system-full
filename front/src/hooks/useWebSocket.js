@@ -56,7 +56,7 @@ const useWebSocket = (url, topics, onMessage) => {
                 client.deactivate();
             }
         };
-    }, [url, topicsString, memoizedOnMessage, connected]);
+    }, [url, topicsString, memoizedOnMessage, connected, topics]);
 
     return { stompClient, connected, error };
 };
