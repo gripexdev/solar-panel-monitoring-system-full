@@ -23,8 +23,18 @@ public class SolarPanelMonitoringSystemApplication {
             logger.info("🌐 Application is now ready to serve requests");
             logger.info("📊 Health check available at: /health");
             logger.info("🏠 Root endpoint available at: /");
+            
+            // Add a simple startup completion indicator
+            System.out.println("==========================================");
+            System.out.println("🎉 APPLICATION STARTUP COMPLETED SUCCESSFULLY!");
+            System.out.println("🌐 Ready to serve requests on port 8080");
+            System.out.println("📊 Health: /health");
+            System.out.println("🏠 Root: /");
+            System.out.println("==========================================");
+            
         } catch (Exception e) {
             logger.error("Failed to start Solar Panel Monitoring System Application", e);
+            System.err.println("❌ APPLICATION STARTUP FAILED: " + e.getMessage());
             throw e;
         }
     }

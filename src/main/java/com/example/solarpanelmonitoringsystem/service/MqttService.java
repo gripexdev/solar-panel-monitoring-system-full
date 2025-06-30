@@ -58,16 +58,23 @@ public class MqttService implements MqttCallback {
     public void init() {
         logger.info("Starting MQTT service initialization...");
         try {
-            if (mqttClient != null && mqttClient.isConnected()) {
-                logger.info("MQTT client is available and connected, setting up callback...");
-                mqttClient.setCallback(this);
-                subscribeToTopics();
-                logger.info("MQTT service initialized successfully");
+            logger.info("Checking MQTT client status...");
+            if (mqttClient != null) {
+                logger.info("MQTT client is available, checking connection...");
+                if (mqttClient.isConnected()) {
+                    logger.info("MQTT client is connected, setting up callback...");
+                    mqttClient.setCallback(this);
+                    logger.info("MQTT callback set successfully");
+                    subscribeToTopics();
+                    logger.info("MQTT service initialized successfully");
+                } else {
+                    logger.warn("MQTT client is not connected. MQTT functionality will be disabled.");
+                }
             } else {
-                logger.warn("MQTT client is null or not connected. MQTT functionality will be disabled.");
+                logger.warn("MQTT client is null. MQTT functionality will be disabled.");
             }
         } catch (Exception e) {
-            logger.error("Error initializing MQTT service", e);
+            logger.error("Error initializing MQTT service: " + e.getMessage(), e);
         }
         logger.info("MQTT service initialization completed");
     }
