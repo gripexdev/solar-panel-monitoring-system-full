@@ -15,8 +15,14 @@ COPY src src
 RUN ./mvnw clean
 RUN ./mvnw package -DskipTests
 
+# Debug: List contents of target directory
+RUN ls -l target
+
+# Copy the built JAR as app.jar
+COPY target/*.jar app.jar
+
 # Expose port
 EXPOSE 8080
 
 # Run the application with optimized settings
-CMD ["java", "-Xmx512m", "-Xms256m", "-XX:+UseG1GC", "-jar", "target/solar-panel-monitoring-system-0.0.1-SNAPSHOT.jar", "--spring.profiles.active=prod"]
+CMD ["java", "-Xmx512m", "-Xms256m", "-XX:+UseG1GC", "-jar", "app.jar", "--spring.profiles.active=prod"]
