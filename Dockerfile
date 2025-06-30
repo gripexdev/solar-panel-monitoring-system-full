@@ -11,12 +11,6 @@ COPY .mvn .mvn
 # Copy source code
 COPY src src
 
-# Copy startup script
-COPY start.sh .
-
-# Make startup script executable
-RUN chmod +x start.sh
-
 # Force clean build for Railway troubleshooting
 RUN ./mvnw clean
 RUN ./mvnw package -DskipTests
