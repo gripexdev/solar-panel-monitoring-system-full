@@ -96,7 +96,7 @@ function MonitoringDashboard({ userRole = "ADMIN" }) {
 		stompClient,
 		connected: wsConnected,
 	} = useWebSocket(
-		"http://localhost:8080/ws",
+		`${process.env.REACT_APP_API_URL || "http://localhost:8080"}/ws`,
 		["/topic/sensor-data"],
 		(message) => {
 			try {

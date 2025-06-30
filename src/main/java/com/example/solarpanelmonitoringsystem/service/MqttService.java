@@ -68,7 +68,25 @@ public class MqttService implements MqttCallback {
                     subscribeToTopics();
                     logger.info("MQTT service initialized successfully");
                 } else {
-                    logger.warn("MQTT client is not connected. MQTT functionality will be disabled.");
+                    logger.warn("MQTT client is not connected. Attempting to connect...");
+                    try {
+                        // Try to connect if not already connected
+                        MqttConnectOptions options = new MqttConnectOptions();
+                        options.setUserName("othmane");
+                        options.setPassword("othmane".toCharArray());
+                        options.setAutomaticReconnect(true);
+                        options.setCleanSession(true);
+                        options.setConnectionTimeout(30);
+                        options.setKeepAliveInterval(60);
+                        
+                        mqttClient.connect(options);
+                        logger.info("Successfully connected to MQTT broker");
+                        mqttClient.setCallback(this);
+                        subscribeToTopics();
+                        logger.info("MQTT service initialized successfully after reconnection");
+                    } catch (Exception e) {
+                        logger.error("Failed to connect to MQTT broker: " + e.getMessage(), e);
+                    }
                 }
             } else {
                 logger.warn("MQTT client is null. MQTT functionality will be disabled.");
@@ -105,9 +123,10 @@ public class MqttService implements MqttCallback {
     public void messageArrived(String topic, MqttMessage message) {
         try {
             String payload = new String(message.getPayload());
-            logger.debug("Received message on topic {}: {}", topic, payload);
+            logger.info("Received MQTT message on topic {}: {}", topic, payload);
 
             SensorDataDto sensorData = objectMapper.readValue(payload, SensorDataDto.class);
+            logger.info("Parsed sensor data: {}", sensorData);
 
             // Saving the sensor data to the database
             SensorData sensorData1 = new SensorData();
@@ -121,14 +140,15 @@ public class MqttService implements MqttCallback {
             sensorData1.setSnow(sensorData.isSnow());
             sensorData1.setTimestamp(sensorData.getTimestamp());
             sensorDataRepo.save(sensorData1);
+            logger.info("Sensor data saved to database");
 
             this.latestSensorData = sensorData;
             messagingTemplate.convertAndSend("/topic/sensor-data", sensorData);
-            // Debbuging
-            logger.info("Raw payload: {}", payload);
-            logger.info("Parsed data: {}", sensorData);
+            logger.info("Sensor data sent to WebSocket clients via /topic/sensor-data");
         } catch (JsonProcessingException e) {
-            logger.error("Error processing MQTT message", e);
+            logger.error("Error processing MQTT message: " + e.getMessage(), e);
+        } catch (Exception e) {
+            logger.error("Unexpected error in messageArrived: " + e.getMessage(), e);
         }
     }
 
