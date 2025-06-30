@@ -16,7 +16,6 @@ import {
 	WiThermometer as TemperatureIcon,
 	WiDaySunny as RadiationIcon,
 	WiSunrise as SunIcon,
-	WiBarometer as PressureIcon,
 	WiHumidity as HumidityIcon,
 } from "react-icons/wi";
 import {
@@ -60,7 +59,7 @@ function MonitoringDashboard({ userRole = "ADMIN" }) {
 	const [controlMode, setControlMode] = useState("MANUAL");
 	const [targetAngle, setTargetAngle] = useState("25°");
 	const [manualAngle, setManualAngle] = useState(25); // Default angle
-	const [limitSwitchState, setLimitSwitchState] = useState("Triggered");
+	const [limitSwitchState] = useState("Triggered");
 
 	// Plant requirements
 	const [plantRequirements, setPlantRequirements] = useState({
@@ -96,7 +95,6 @@ function MonitoringDashboard({ userRole = "ADMIN" }) {
 	const {
 		stompClient,
 		connected: wsConnected,
-		error,
 	} = useWebSocket(
 		"http://localhost:8080/ws",
 		["/topic/sensor-data"],

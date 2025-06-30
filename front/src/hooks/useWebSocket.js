@@ -1,10 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Client } from "@stomp/stompjs";
 
 const useWebSocket = (url, topics, onMessage) => {
     const [stompClient, setStompClient] = useState(null);
     const [connected, setConnected] = useState(false);
     const [error, setError] = useState(null);
+
+    // Memoize the topics string to prevent unnecessary re-renders
+    const topicsString = JSON.stringify(topics);
+
+    // Memoize the onMessage callback to prevent infinite re-renders
+    const memoizedOnMessage = useCallback(onMessage, [onMessage]);
 
     useEffect(() => {
         const client = new Client({
@@ -22,7 +28,7 @@ const useWebSocket = (url, topics, onMessage) => {
             setError(null);
             topics.forEach((topic) => {
                 client.subscribe(topic, (message) => {
-                    onMessage(message);
+                    memoizedOnMessage(message);
                 });
             });
         };
@@ -50,7 +56,7 @@ const useWebSocket = (url, topics, onMessage) => {
                 client.deactivate();
             }
         };
-    }, [url, JSON.stringify(topics)]);
+    }, [url, topicsString, memoizedOnMessage, connected]);
 
     return { stompClient, connected, error };
 };
