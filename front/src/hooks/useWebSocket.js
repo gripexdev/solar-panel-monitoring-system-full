@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { Client } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
 
 const useWebSocket = (url, topics, onMessage) => {
     const [stompClient, setStompClient] = useState(null);
@@ -14,16 +15,17 @@ const useWebSocket = (url, topics, onMessage) => {
 
     useEffect(() => {
         const client = new Client({
-            brokerURL: url,
+            webSocketFactory: () => new SockJS(url), // Use SockJS instead of native WebSocket
             reconnectDelay: 5000,
             heartbeatIncoming: 4000,
             heartbeatOutgoing: 4000,
             debug: function (str) {
-                // console.log("STOMP: ", str);
+                console.log("STOMP: ", str);
             },
         });
 
         client.onConnect = () => {
+            console.log("STOMP: Connected to WebSocket");
             setConnected(true);
             setError(null);
             topics.forEach((topic) => {
@@ -34,16 +36,19 @@ const useWebSocket = (url, topics, onMessage) => {
         };
 
         client.onStompError = (frame) => {
-            setError(`Broker reported error: ${frame.headers.message}`);
+            const errorMsg = `Broker reported error: ${frame.headers.message}`;
             console.error("STOMP error:", frame);
+            setError(errorMsg);
         };
 
         client.onWebSocketError = (event) => {
-            setError("WebSocket connection error");
+            const errorMsg = "WebSocket connection error";
             console.error("WebSocket error:", event);
+            setError(errorMsg);
         };
 
         client.onWebSocketClose = () => {
+            console.log("STOMP: WebSocket connection closed");
             setConnected(false);
             setError("WebSocket connection closed");
         };
