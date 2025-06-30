@@ -15,6 +15,7 @@ public class ApplicationStartupListener {
     @EventListener(ApplicationStartedEvent.class)
     public void onApplicationStarted() {
         logger.info("🚀 Application started event triggered");
+        logger.info("Application is starting up - components are being initialized");
     }
     
     @EventListener(ApplicationReadyEvent.class)
@@ -23,5 +24,6 @@ public class ApplicationStartupListener {
         logger.info("🌐 Health check available at: /actuator/health");
         logger.info("🏠 Root endpoint available at: /");
         logger.info("📊 API endpoints available at: /auth/**, /user/**, /admin/**");
+        logger.info("🎉 Solar Panel Monitoring System is now LIVE and ready for requests!");
     }
 } 

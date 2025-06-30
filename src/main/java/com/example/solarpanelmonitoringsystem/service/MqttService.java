@@ -56,8 +56,10 @@ public class MqttService implements MqttCallback {
 
     @PostConstruct
     public void init() {
+        logger.info("Starting MQTT service initialization...");
         try {
             if (mqttClient != null && mqttClient.isConnected()) {
+                logger.info("MQTT client is available and connected, setting up callback...");
                 mqttClient.setCallback(this);
                 subscribeToTopics();
                 logger.info("MQTT service initialized successfully");
@@ -67,20 +69,24 @@ public class MqttService implements MqttCallback {
         } catch (Exception e) {
             logger.error("Error initializing MQTT service", e);
         }
+        logger.info("MQTT service initialization completed");
     }
 
     private void subscribeToTopics() throws MqttException {
+        logger.info("Starting MQTT topic subscription...");
         if (mqttClient == null || !mqttClient.isConnected()) {
             logger.warn("Cannot subscribe to topics: MQTT client is null or not connected");
             return;
         }
         
         if (sensorDataTopic != null && !sensorDataTopic.isEmpty()) {
+            logger.info("Subscribing to sensor data topic: {}", sensorDataTopic);
             mqttClient.subscribe(sensorDataTopic);
             logger.info("Subscribed to topic: {}", sensorDataTopic);
         } else {
             logger.warn("Sensor data topic not configured");
         }
+        logger.info("MQTT topic subscription completed");
     }
 
     @Override

@@ -35,5 +35,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/ws") // register /ws as the webSocket endpoint that clients will use to connect to the server
                 .setAllowedOriginPatterns("*"); // allow connections from any origin
         logger.info("WebSocket STOMP endpoints registered successfully");
+        logger.info("WebSocket configuration completed - moving to next configuration phase");
     }
 }
