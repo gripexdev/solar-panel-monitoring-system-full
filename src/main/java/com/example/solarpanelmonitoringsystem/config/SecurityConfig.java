@@ -34,36 +34,20 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        logger.info("Configuring Security Filter Chain...");
-        
-        httpSecurity.csrf(AbstractHttpConfigurer::disable) // Turn off CSRF (not needed for API)
-                .cors(Customizer.withDefaults()) // Enable CORS (to allow requests from other domains)
-                // Secure different parts of the app
-                .authorizeHttpRequests(request -> request.requestMatchers("/auth/**", "/public/**").permitAll() // Public Paths
-                        .requestMatchers("/ws/**", "/ws/info/**").permitAll() // web sockets
-                        .requestMatchers("/admin/**").hasAnyAuthority("ADMIN") // Admin-only paths
-                        .requestMatchers("/user/**").hasAnyAuthority("USER") // User-only paths
-                        .requestMatchers("/adminuser/**").hasAnyAuthority("ADMIN", "USER") // Both role can access
-                        .requestMatchers("/actuator/**", "/health", "/", "/test", "/startup").permitAll() // Health check, root path, test endpoint, and startup endpoint
-                        .anyRequest().authenticated()) // All other paths need login
-                // Don't store the sessions on the server (stateless)
-                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // Use a Custom authentication provider
-                .authenticationProvider(authenticationProvider())
-                // Add a custom JWT filter to check tokens
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
-        logger.info("Security Filter Chain configured successfully");
+        logger.info("Configuring Security Filter Chain (DEBUG MODE - ALL PERMITTED)...");
+        httpSecurity.csrf(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
+                .authorizeHttpRequests(request -> request.anyRequest().permitAll());
+        logger.info("Security Filter Chain configured to permit all requests (DEBUG MODE)");
         return httpSecurity.build();
-
     }
 
     @Bean
     public AuthenticationProvider authenticationProvider(){
         logger.info("Configuring Authentication Provider...");
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider(); // Create a new DaoAuthenticationProvider
-        daoAuthenticationProvider.setUserDetailsService(ourUserDetailsService); // Links the custom userDetailsService
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder()); // Set the passwordEncoder for secure password verification
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(ourUserDetailsService);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         logger.info("Authentication Provider configured successfully");
         return daoAuthenticationProvider;
     }
