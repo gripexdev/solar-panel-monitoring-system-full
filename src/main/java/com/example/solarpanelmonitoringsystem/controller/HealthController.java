@@ -36,4 +36,14 @@ public class HealthController {
         response.put("timestamp", System.currentTimeMillis());
         return ResponseEntity.ok(response);
     }
+    
+    @GetMapping("/startup")
+    public ResponseEntity<Map<String, Object>> startup() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Application startup test");
+        response.put("status", "started");
+        response.put("timestamp", System.currentTimeMillis());
+        response.put("uptime", System.currentTimeMillis());
+        return ResponseEntity.ok(response);
+    }
 } 

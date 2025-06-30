@@ -19,7 +19,10 @@ public class SolarPanelMonitoringSystemApplication {
         logger.info("Starting Solar Panel Monitoring System Application...");
         try {
             SpringApplication.run(SolarPanelMonitoringSystemApplication.class, args);
-            logger.info("Solar Panel Monitoring System Application started successfully!");
+            logger.info("🎉 Solar Panel Monitoring System Application started successfully!");
+            logger.info("🌐 Application is now ready to serve requests");
+            logger.info("📊 Health check available at: /health");
+            logger.info("🏠 Root endpoint available at: /");
         } catch (Exception e) {
             logger.error("Failed to start Solar Panel Monitoring System Application", e);
             throw e;

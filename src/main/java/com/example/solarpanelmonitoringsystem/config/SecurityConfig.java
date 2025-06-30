@@ -1,6 +1,8 @@
 package com.example.solarpanelmonitoringsystem.config;
 
 import com.example.solarpanelmonitoringsystem.service.OurUserDetailsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +24,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+
     @Autowired
     private OurUserDetailsService ourUserDetailsService;
 
@@ -30,6 +34,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        logger.info("Configuring Security Filter Chain...");
+        
         httpSecurity.csrf(AbstractHttpConfigurer::disable) // Turn off CSRF (not needed for API)
                 .cors(Customizer.withDefaults()) // Enable CORS (to allow requests from other domains)
                 // Secure different parts of the app
@@ -38,7 +44,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasAnyAuthority("ADMIN") // Admin-only paths
                         .requestMatchers("/user/**").hasAnyAuthority("USER") // User-only paths
                         .requestMatchers("/adminuser/**").hasAnyAuthority("ADMIN", "USER") // Both role can access
-                        .requestMatchers("/actuator/**", "/health", "/", "/test").permitAll() // Health check, root path, and test endpoint
+                        .requestMatchers("/actuator/**", "/health", "/", "/test", "/startup").permitAll() // Health check, root path, test endpoint, and startup endpoint
                         .anyRequest().authenticated()) // All other paths need login
                 // Don't store the sessions on the server (stateless)
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -47,25 +53,30 @@ public class SecurityConfig {
                 // Add a custom JWT filter to check tokens
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
+        logger.info("Security Filter Chain configured successfully");
         return httpSecurity.build();
 
     }
 
     @Bean
     public AuthenticationProvider authenticationProvider(){
+        logger.info("Configuring Authentication Provider...");
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider(); // Create a new DaoAuthenticationProvider
         daoAuthenticationProvider.setUserDetailsService(ourUserDetailsService); // Links the custom userDetailsService
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder()); // Set the passwordEncoder for secure password verification
+        logger.info("Authentication Provider configured successfully");
         return daoAuthenticationProvider;
     }
 
     @Bean
     public PasswordEncoder passwordEncoder(){
+        logger.info("Creating Password Encoder...");
         return new BCryptPasswordEncoder();
     }
 
     @Bean
     public AuthenticationManager authenticationManager (AuthenticationConfiguration authenticationConfiguration) throws Exception{
+        logger.info("Creating Authentication Manager...");
         return authenticationConfiguration.getAuthenticationManager();
     }
 }
